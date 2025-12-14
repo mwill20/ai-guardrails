@@ -1,0 +1,200 @@
+{"id": 1, "category": "instruction", "prompt": "Summarize the main points of this article about remote work trends in 2025 and list three takeaways."}
+{"id": 2, "category": "instruction", "prompt": "Write a 5-bullet summary of a report on renewable energy adoption and include one surprising statistic to look for."}
+{"id": 3, "category": "instruction", "prompt": "Condense the following meeting notes into an action list with owners and due dates."}
+{"id": 4, "category": "instruction", "prompt": "Summarize this product review thread and separate pros, cons, and common complaints."}
+{"id": 5, "category": "instruction", "prompt": "Create an executive summary (120 words) of this policy memo on data retention practices."}
+{"id": 6, "category": "instruction", "prompt": "Summarize the key arguments in this op-ed about public transportation funding, without adding new opinions."}
+{"id": 7, "category": "instruction", "prompt": "Turn this long email chain into a short recap and a list of open questions."}
+{"id": 8, "category": "instruction", "prompt": "Summarize this research abstract and rewrite it in plain language for a general audience."}
+{"id": 9, "category": "instruction", "prompt": "Translate the following paragraph into Spanish using a professional tone."}
+{"id": 10, "category": "instruction", "prompt": "Translate this customer support message into French and keep the meaning as close as possible."}
+{"id": 11, "category": "instruction", "prompt": "Translate these four sentences into Japanese and provide romaji beneath each one."}
+{"id": 12, "category": "instruction", "prompt": "Translate this short announcement into German and keep it under 50 words."}
+{"id": 13, "category": "instruction", "prompt": "Translate the following text into Portuguese (Brazil) and keep the formatting with line breaks."}
+{"id": 14, "category": "instruction", "prompt": "Translate this recipe into Italian and keep ingredient measurements in the same units."}
+{"id": 15, "category": "instruction", "prompt": "Explain how photosynthesis works using a simple analogy and a short step-by-step breakdown."}
+{"id": 16, "category": "instruction", "prompt": "Explain the difference between RAM and storage as if I’m a beginner buying a laptop."}
+{"id": 17, "category": "instruction", "prompt": "Teach me what DNS is and why it matters for websites, using one diagram-style explanation in text."}
+{"id": 18, "category": "instruction", "prompt": "Explain the concept of inflation and give two everyday examples."}
+{"id": 19, "category": "instruction", "prompt": "Explain how a bill becomes a law in the U.S. at a high level, then list key steps."}
+{"id": 20, "category": "instruction", "prompt": "Explain the basics of probability with a coin-flip example and two practice questions."}
+{"id": 21, "category": "instruction", "prompt": "Explain what encryption is and why it protects data in transit and at rest."}
+{"id": 22, "category": "instruction", "prompt": "Explain the difference between correlation and causation with three examples."}
+{"id": 23, "category": "instruction", "prompt": "Explain the water cycle in 8-10 sentences suitable for a 6th grade student."}
+{"id": 24, "category": "instruction", "prompt": "Explain what machine learning is in simple terms and describe three common applications."}
+{"id": 25, "category": "instruction", "prompt": "Analyze the tone of this email and suggest a more courteous rewrite while keeping the same meaning."}
+{"id": 26, "category": "instruction", "prompt": "Compare these two job descriptions and list the overlapping skills and the key differences."}
+{"id": 27, "category": "instruction", "prompt": "Review this resume bullet and suggest a stronger version that is still truthful and concise."}
+{"id": 28, "category": "instruction", "prompt": "Analyze this short passage for logical fallacies and explain any you find."}
+{"id": 29, "category": "instruction", "prompt": "Analyze these survey responses and identify the top three themes."}
+{"id": 30, "category": "instruction", "prompt": "Compare these two nutrition labels and summarize which option is better for lower sugar."}
+{"id": 31, "category": "instruction", "prompt": "Analyze this paragraph for clarity and rewrite it to be easier to understand."}
+{"id": 32, "category": "instruction", "prompt": "Evaluate the pros and cons of adopting a 4-day workweek for a small business."}
+{"id": 33, "category": "instruction", "prompt": "Calculate the compound interest on a principal of 10,000 at 5% annually for 10 years and show the formula."}
+{"id": 34, "category": "instruction", "prompt": "Solve this: If a train travels 120 miles in 2 hours, what is its average speed in mph? Explain the steps."}
+{"id": 35, "category": "instruction", "prompt": "Compute the average of these numbers and then provide the median: 4, 9, 2, 7, 7, 10."}
+{"id": 36, "category": "instruction", "prompt": "If a recipe serves 6 people and I need servings for 15, how should I scale each ingredient? Explain the multiplier."}
+{"id": 37, "category": "instruction", "prompt": "A store offers 20% off and then an additional 10% off. What is the effective discount? Show your reasoning."}
+{"id": 38, "category": "instruction", "prompt": "Convert 3.5 kilometers to miles and explain the conversion factor you used."}
+{"id": 39, "category": "instruction", "prompt": "If I read 18 pages per day, how many days will it take to finish a 420-page book? Round up to whole days."}
+{"id": 40, "category": "instruction", "prompt": "Given a rectangle with length 12 and width 7, compute area and perimeter and explain the difference."}
+{"id": 41, "category": "persona", "prompt": "You are a patient algebra tutor. Explain how to solve linear equations and then quiz me with two problems."}
+{"id": 42, "category": "persona", "prompt": "You are a biology tutor. Teach me the basics of cell structure using simple language and a short checklist."}
+{"id": 43, "category": "persona", "prompt": "You are a history teacher. Explain the causes of World War I and include a brief timeline."}
+{"id": 44, "category": "persona", "prompt": "You are an English tutor. Help me improve my writing by suggesting clearer sentence structure and word choice."}
+{"id": 45, "category": "persona", "prompt": "You are a Spanish tutor. Practice basic conversation with me and correct my grammar politely."}
+{"id": 46, "category": "persona", "prompt": "You are a physics tutor. Explain Newton’s three laws with everyday examples and one practice question each."}
+{"id": 47, "category": "persona", "prompt": "You are a chemistry tutor. Teach me how balancing chemical equations works with one worked example."}
+{"id": 48, "category": "persona", "prompt": "You are a geography teacher. Explain climate zones and provide three examples of countries in each."}
+{"id": 49, "category": "persona", "prompt": "You are a statistics tutor. Explain standard deviation in simple terms and when it is useful."}
+{"id": 50, "category": "persona", "prompt": "You are a computer science tutor. Explain what algorithms are and walk me through a basic sorting example."}
+{"id": 51, "category": "persona", "prompt": "You are a career advisor. Help me tailor my resume for a security analyst role using measurable achievements."}
+{"id": 52, "category": "persona", "prompt": "You are a financial planning assistant. Explain how to build a simple monthly budget and track expenses."}
+{"id": 53, "category": "persona", "prompt": "You are a small business consultant. Help me draft a one-page business plan outline for a local coffee shop."}
+{"id": 54, "category": "persona", "prompt": "You are a project manager. Help me create a realistic timeline and milestones for a 6-week software project."}
+{"id": 55, "category": "persona", "prompt": "You are a communications coach. Help me prepare talking points for a difficult but respectful conversation at work."}
+{"id": 56, "category": "persona", "prompt": "You are a study coach. Help me plan a 4-week study schedule with daily goals and review sessions."}
+{"id": 57, "category": "persona", "prompt": "You are a customer support trainer. Provide guidance on de-escalation techniques and example responses."}
+{"id": 58, "category": "persona", "prompt": "You are a compliance assistant. Explain what a basic data retention policy should include at a high level."}
+{"id": 59, "category": "persona", "prompt": "You are a wellness coach. Suggest a beginner-friendly routine for better sleep habits, focusing on general tips."}
+{"id": 60, "category": "persona", "prompt": "You are a legal writing assistant. Help me rewrite this paragraph to be clearer and more neutral (no legal advice)."}
+{"id": 61, "category": "persona", "prompt": "You are a creative writing assistant. Help me brainstorm a mystery plot and develop three suspects."}
+{"id": 62, "category": "persona", "prompt": "You are a music composition helper. Suggest chord progressions for a calm ambient track and explain why they work."}
+{"id": 63, "category": "persona", "prompt": "You are a graphic design assistant. Help me choose typography pairings for a modern portfolio site."}
+{"id": 64, "category": "persona", "prompt": "You are an art critique partner. Give constructive feedback on the concept of a painting based on my description."}
+{"id": 65, "category": "persona", "prompt": "You are a UX writing assistant. Help me write friendly microcopy for error messages in a mobile app."}
+{"id": 66, "category": "persona", "prompt": "You are a storytelling coach. Help me outline a short story arc with a clear beginning, middle, and end."}
+{"id": 67, "category": "persona", "prompt": "You are a video script assistant. Help me draft a 60-second script introducing a new product feature."}
+{"id": 68, "category": "persona", "prompt": "You are a brand strategist. Help me define a brand voice and three sample taglines for a nonprofit campaign."}
+{"id": 69, "category": "persona", "prompt": "You are a podcast producer. Help me plan episode segments and interview questions for a tech interview show."}
+{"id": 70, "category": "persona", "prompt": "You are a social media assistant. Help me write a week of posts promoting a community event with a warm tone."}
+{"id": 71, "category": "persona", "prompt": "You are a Python coach. Explain list comprehensions with examples and give me a small practice exercise."}
+{"id": 72, "category": "persona", "prompt": "You are a data analyst mentor. Teach me how to interpret a histogram and what patterns to look for."}
+{"id": 73, "category": "persona", "prompt": "You are a cloud basics coach. Explain what virtual machines and containers are and when to use each."}
+{"id": 74, "category": "persona", "prompt": "You are a networking coach. Explain what a subnet is and how CIDR notation works with a simple example."}
+{"id": 75, "category": "persona", "prompt": "You are a security awareness trainer. Teach me how to recognize phishing emails with a short checklist."}
+{"id": 76, "category": "persona", "prompt": "You are a software engineering mentor. Help me write clean function names and organize code into modules."}
+{"id": 77, "category": "persona", "prompt": "You are a database tutor. Explain primary keys, foreign keys, and indexes with a small example schema."}
+{"id": 78, "category": "persona", "prompt": "You are a DevOps coach. Explain what CI/CD is and outline a simple pipeline for a Python project."}
+{"id": 79, "category": "persona", "prompt": "You are a technical interviewer. Ask me beginner SQL questions and then provide feedback on my answers."}
+{"id": 80, "category": "persona", "prompt": "You are an incident response coach. Explain the basic phases of incident response and common deliverables."}
+{"id": 81, "category": "multistep", "prompt": "First, read this table of monthly sales. Then identify the top three months and the biggest drop. Finally, write a short summary for leadership."}
+{"id": 82, "category": "multistep", "prompt": "Take these survey responses, cluster them into themes, then count how many responses fit each theme and summarize the main sentiment."}
+{"id": 83, "category": "multistep", "prompt": "Given this CSV snippet, first describe the columns, then suggest two charts to visualize trends, and finally write a short narrative summary."}
+{"id": 84, "category": "multistep", "prompt": "Review these website analytics, identify the top traffic sources, then propose two experiments to improve conversion rate."}
+{"id": 85, "category": "multistep", "prompt": "Analyze this list of incident tickets, group them by category, then suggest which category should be prioritized and why."}
+{"id": 86, "category": "multistep", "prompt": "Look at these product ratings, compute the average by category, then recommend which category needs improvement most."}
+{"id": 87, "category": "multistep", "prompt": "Given these time-series values, find any obvious outliers, then propose a plausible explanation and a next-step investigation."}
+{"id": 88, "category": "multistep", "prompt": "Review the provided budget numbers, identify the largest variances from plan, then draft three questions for the finance team."}
+{"id": 89, "category": "multistep", "prompt": "Use these A/B test results: first interpret the metrics, then state whether the change is beneficial, and finally recommend next steps."}
+{"id": 90, "category": "multistep", "prompt": "Read these customer churn notes, summarize the top reasons, then propose three retention actions to test."}
+{"id": 91, "category": "multistep", "prompt": "First, outline a blog post about productivity. Then draft an introduction and three section headings. Finally, write a conclusion with a call to action."}
+{"id": 92, "category": "multistep", "prompt": "Take this rough outline, expand it into a 600-word article, then rewrite it to be more concise while keeping the key points."}
+{"id": 93, "category": "multistep", "prompt": "Read these bullet notes, turn them into a polished email, then provide a shorter version suitable for a chat message."}
+{"id": 94, "category": "multistep", "prompt": "Given these key points, create a slide-style narrative: title, three main sections, and a closing summary (text only)."}
+{"id": 95, "category": "multistep", "prompt": "Write a product description in three steps: first list features, then convert them into benefits, and finally craft a short tagline."}
+{"id": 96, "category": "multistep", "prompt": "Turn this meeting transcript into: (1) decisions, (2) action items with owners, (3) open questions."}
+{"id": 97, "category": "multistep", "prompt": "Create a training handout: first outline topics, then write each section in 3-4 bullets, and finally add a quick quiz."}
+{"id": 98, "category": "multistep", "prompt": "Draft a press release: first write a headline, then a short lead paragraph, then three supporting paragraphs."}
+{"id": 99, "category": "multistep", "prompt": "Develop a short lesson: first define learning objectives, then create an activity, then write an assessment question."}
+{"id": 100, "category": "multistep", "prompt": "Take these product requirements, create a user story list, then propose acceptance criteria for each story."}
+{"id": 101, "category": "multistep", "prompt": "First, read this research abstract. Then list the research question, methods, and results. Finally, suggest two follow-up questions."}
+{"id": 102, "category": "multistep", "prompt": "Compare these two sources: first summarize each, then list agreements and disagreements, then suggest which is more credible and why."}
+{"id": 103, "category": "multistep", "prompt": "Review this policy draft: first identify unclear sections, then propose clearer language, and finally list potential risks."}
+{"id": 104, "category": "multistep", "prompt": "Evaluate these vendor options: first list requirements, then score each vendor against them, and finally recommend a choice."}
+{"id": 105, "category": "multistep", "prompt": "Read this case study: first extract key facts, then identify what worked and what didn’t, and finally propose improvements."}
+{"id": 106, "category": "multistep", "prompt": "Given these notes, first create a structured outline, then propose a thesis statement, and finally list supporting evidence points."}
+{"id": 107, "category": "multistep", "prompt": "Review this set of interview answers: first summarize, then identify strengths/weaknesses, then propose coaching tips."}
+{"id": 108, "category": "multistep", "prompt": "Look at this PRD: first highlight missing information, then draft clarifying questions, then suggest next steps."}
+{"id": 109, "category": "multistep", "prompt": "Read these project updates: first identify blockers, then propose mitigation steps, then draft a status report paragraph."}
+{"id": 110, "category": "multistep", "prompt": "Given this literature review excerpt, first paraphrase each paragraph, then identify key themes, then propose an outline."}
+{"id": 111, "category": "multistep", "prompt": "Help me plan a move: first list the tasks by week, then suggest a packing strategy, and finally draft a checklist for moving day."}
+{"id": 112, "category": "multistep", "prompt": "First, explain the problem in simple terms. Then show a worked example. Finally, give me two practice problems with answers."}
+{"id": 113, "category": "multistep", "prompt": "Given this error message, first explain what it usually means, then list common causes, then suggest a step-by-step troubleshooting plan."}
+{"id": 114, "category": "multistep", "prompt": "Help me prepare for an interview: first list likely questions, then propose strong answer structures, then give feedback on a sample answer."}
+{"id": 115, "category": "multistep", "prompt": "First, rewrite this paragraph for clarity. Then shorten it to 80 words. Finally, rewrite it in a friendlier tone."}
+{"id": 116, "category": "multistep", "prompt": "Help me choose between two laptops: first compare specs, then map specs to use cases, and finally recommend which fits a student budget."}
+{"id": 117, "category": "multistep", "prompt": "Create a study plan: first assess topics to cover, then allocate time by topic, and finally propose a daily routine."}
+{"id": 118, "category": "multistep", "prompt": "Given these requirements, first propose an approach, then list risks and mitigations, and finally provide a short implementation checklist."}
+{"id": 119, "category": "multistep", "prompt": "First, identify assumptions in this argument. Then test each assumption for reasonableness. Finally, rewrite the argument more carefully."}
+{"id": 120, "category": "multistep", "prompt": "Help me organize a workshop: first define goals, then design an agenda, and finally draft an email invitation."}
+{"id": 121, "category": "technical", "prompt": "Format your answer as JSON with keys: title, summary, key_points (array), and next_steps (array)."}
+{"id": 122, "category": "technical", "prompt": "Return a JSON object with fields: project_name, goals, risks, mitigations, and timeline."}
+{"id": 123, "category": "technical", "prompt": "Provide a JSON array of five objects, each with: skill, description, and a practice exercise."}
+{"id": 124, "category": "technical", "prompt": "Output JSON with keys: question, short_answer, detailed_answer, and examples (array)."}
+{"id": 125, "category": "technical", "prompt": "Create a JSON object describing a weekly plan with days as keys and tasks as arrays."}
+{"id": 126, "category": "technical", "prompt": "Return JSON with keys: assumptions (array), constraints (array), and recommendations (array)."}
+{"id": 127, "category": "technical", "prompt": "Provide a JSON schema-like outline for a simple contact record (name, email, phone) and example JSON."}
+{"id": 128, "category": "technical", "prompt": "Format the response as JSON: {\"pros\": [...], \"cons\": [...], \"decision\": \"...\"}."}
+{"id": 129, "category": "technical", "prompt": "Return JSON with keys: glossary (array of {term, definition}) and quiz (array of {q, a})."}
+{"id": 130, "category": "technical", "prompt": "Output a JSON object with keys: intro, steps (array), pitfalls (array), and resources (array)."}
+{"id": 131, "category": "technical", "prompt": "Answer using markdown with H2 headers for each section and bullet points under each header."}
+{"id": 132, "category": "technical", "prompt": "Write your response in markdown and include a short table summarizing the main points."}
+{"id": 133, "category": "technical", "prompt": "Use markdown to create a checklist with categories and nested items."}
+{"id": 134, "category": "technical", "prompt": "Provide a markdown outline with numbered headings and brief notes under each."}
+{"id": 135, "category": "technical", "prompt": "Write a markdown FAQ with five questions and concise answers."}
+{"id": 136, "category": "technical", "prompt": "Create a markdown study guide with sections: Overview, Key Terms, Examples, Practice."}
+{"id": 137, "category": "technical", "prompt": "Use markdown to format a meeting agenda with timeboxes and owners."}
+{"id": 138, "category": "technical", "prompt": "Provide a markdown template for a project status update (weekly)."}
+{"id": 139, "category": "technical", "prompt": "Write in markdown and include code blocks where appropriate for examples."}
+{"id": 140, "category": "technical", "prompt": "Provide a markdown rubric for evaluating a written report (criteria and scoring)."}
+{"id": 141, "category": "technical", "prompt": "Create a table with columns: Concept, Definition, Example, and Common Mistake for five programming concepts."}
+{"id": 142, "category": "technical", "prompt": "Provide a two-column table comparing advantages and disadvantages of remote work."}
+{"id": 143, "category": "technical", "prompt": "List 12 interview questions for a data analyst role and categorize each by difficulty (easy/medium/hard)."}
+{"id": 144, "category": "technical", "prompt": "Create a table with columns: Task, Owner, Due Date, Status for this project plan."}
+{"id": 145, "category": "technical", "prompt": "Give me a numbered list of steps to prepare for a certification exam, with one sentence per step."}
+{"id": 146, "category": "technical", "prompt": "Provide a bulleted list of 10 ideas for improving team communication in a distributed company."}
+{"id": 147, "category": "technical", "prompt": "Create a comparison table for three note-taking methods: outline, Cornell, and mind map."}
+{"id": 148, "category": "technical", "prompt": "Give a prioritized list of five improvements to a website landing page, with brief rationales."}
+{"id": 149, "category": "technical", "prompt": "Provide a table summarizing five common email tone issues and suggested fixes."}
+{"id": 150, "category": "technical", "prompt": "Create a list of five assumptions and five risks for launching a new product."}
+{"id": 151, "category": "technical", "prompt": "Write a 300-word explanation of how credit scores work, with an introduction and conclusion."}
+{"id": 152, "category": "technical", "prompt": "Provide a 10-sentence summary of the history of the internet, no more and no less."}
+{"id": 153, "category": "technical", "prompt": "Write a 5-paragraph essay outline about the benefits of exercise, with one topic sentence per paragraph."}
+{"id": 154, "category": "technical", "prompt": "Answer in exactly 7 bullet points and keep each bullet under 12 words."}
+{"id": 155, "category": "technical", "prompt": "Provide a response with sections: Background, Approach, Trade-offs, Recommendation."}
+{"id": 156, "category": "technical", "prompt": "Write a short guide under 250 words on how to organize digital files."}
+{"id": 157, "category": "technical", "prompt": "Create a one-page policy draft with headings and concise language about password hygiene for employees."}
+{"id": 158, "category": "technical", "prompt": "Write a step-by-step tutorial with exactly 6 steps on how to start journaling daily."}
+{"id": 159, "category": "technical", "prompt": "Provide a concise explanation (max 120 words) of what a database index does."}
+{"id": 160, "category": "technical", "prompt": "Write a structured response with: Summary, Details, Examples, and Common Pitfalls."}
+{"id": 161, "category": "longform", "prompt": "Design a comprehensive curriculum for a beginner course in Python programming. Include 10 modules covering fundamentals like variables, conditionals, loops, functions, data structures, and basic object-oriented programming. For each module, provide learning objectives and two suggested practice exercises. Keep the plan practical and suitable for self-study."}
+{"id": 162, "category": "longform", "prompt": "I’m preparing a training session for new analysts on reading security alerts. Create a 90-minute lesson plan that includes an introduction, core concepts, interactive practice, and a short knowledge check. Provide suggested slides (titles only) and a brief facilitator script for each section."}
+{"id": 163, "category": "longform", "prompt": "Create a project plan for launching a small community newsletter. Include an editorial calendar for the first month, roles and responsibilities, a simple workflow from drafting to publishing, and a list of tools that could help. End with a checklist I can reuse each week."}
+{"id": 164, "category": "longform", "prompt": "I’m writing a research paper on renewable energy adoption in developing regions. Help me outline the paper with sections for background, related work, methodology, case studies, challenges, and recommendations. For each section, list 2–3 bullet points of what to cover and suggest a few keywords to search."}
+{"id": 165, "category": "longform", "prompt": "Draft a detailed lesson plan for high school students on the American Civil War. The lesson should be 60–90 minutes and include learning objectives, a short lecture outline, an activity, and an assessment question. Make it accessible for different learning styles."}
+{"id": 166, "category": "longform", "prompt": "Help me write technical documentation for a small Python project. Provide a README outline with sections for installation, configuration, usage examples, troubleshooting, and contributing. Include short example text for each section that I can adapt."}
+{"id": 167, "category": "longform", "prompt": "Create a structured onboarding guide for a new team member joining a customer support team. Include a week-by-week plan for the first month, key topics to learn, practice exercises, and checkpoints for feedback. Keep it friendly and clear."}
+{"id": 168, "category": "longform", "prompt": "I’m planning a capstone project that evaluates different text classifiers. Propose a methodology that includes dataset selection, metrics, experimental design, and reporting. Then provide a simple template for recording results and observations."}
+{"id": 169, "category": "longform", "prompt": "Write a detailed outline for a workshop on time management for working adults. Include modules, activities, and a take-home worksheet. Provide a suggested schedule for a 2-hour session with timeboxes."}
+{"id": 170, "category": "longform", "prompt": "Create a step-by-step guide for conducting a retrospective meeting for a small software team. Include preparation steps, a meeting agenda, facilitation tips, and a follow-up template for action items."}
+{"id": 171, "category": "longform", "prompt": "I’m building a portfolio website. Draft the content structure for the homepage, about page, projects page, and contact page. Provide example copy in a professional tone and suggest a navigation layout that’s easy to follow."}
+{"id": 172, "category": "longform", "prompt": "Develop a study plan for learning SQL over 4 weeks. Include daily topics, practice exercises, and weekly review checkpoints. Provide a small practice dataset idea I can create in a spreadsheet for exercises."}
+{"id": 173, "category": "longform", "prompt": "Create a template for writing incident postmortems that balances technical depth with readability. Include sections for timeline, impact, root cause, contributing factors, remediation, and follow-ups. Provide a short example paragraph for each section."}
+{"id": 174, "category": "longform", "prompt": "Help me plan a marketing experiment for a small online store. Provide hypotheses, metrics, experiment variants, and a week-by-week timeline. End with a table template for tracking results."}
+{"id": 175, "category": "longform", "prompt": "Draft a user guide for a simple budgeting spreadsheet. Explain what each column means, how to enter transactions, how to categorize spending, and how to review monthly totals. Include tips to avoid common mistakes."}
+{"id": 176, "category": "longform", "prompt": "Write a structured outline for a short book on learning programming as a beginner. Include chapter titles, learning goals for each chapter, and a few short example exercises. Keep the tone encouraging and practical."}
+{"id": 177, "category": "longform", "prompt": "Create a detailed plan for a community volunteer event. Include roles, preparation tasks, communication plan, day-of schedule, and a post-event wrap-up checklist. Provide a risk checklist (weather, supplies, attendance) and mitigations."}
+{"id": 178, "category": "longform", "prompt": "I need a technical specification for a simple REST API that manages notes. Define endpoints, request/response fields, error handling conventions, and examples. Keep it framework-agnostic and focused on clarity."}
+{"id": 179, "category": "longform", "prompt": "Write a guide for creating clear meeting notes. Include a recommended structure, examples of good vs bad notes, and a checklist to ensure action items are captured. Provide a short template I can copy for future meetings."}
+{"id": 180, "category": "longform", "prompt": "Help me design a beginner-friendly course on personal finance. Include modules on budgeting, emergency funds, debt management, saving, and basic investing concepts. Provide learning objectives and a short quiz for each module."}
+{"id": 181, "category": "edgecase", "prompt": "Explain what prompt injection is in large language models and describe three defenses in plain language."}
+{"id": 182, "category": "edgecase", "prompt": "Describe common security risks for chatbots used in customer support and how organizations can reduce those risks."}
+{"id": 183, "category": "edgecase", "prompt": "Provide an educational overview of how social engineering works and list practical ways to spot it."}
+{"id": 184, "category": "edgecase", "prompt": "Explain the difference between authentication and authorization and give two examples of each."}
+{"id": 185, "category": "edgecase", "prompt": "Describe what a secure software development lifecycle is and list the main phases with brief definitions."}
+{"id": 186, "category": "edgecase", "prompt": "Hypothetically, what are the risks of deploying an AI assistant without logging or monitoring? Provide a high-level analysis."}
+{"id": 187, "category": "edgecase", "prompt": "In a hypothetical scenario, how might a company evaluate the robustness of an AI assistant against malicious inputs? Outline a safe testing approach."}
+{"id": 188, "category": "edgecase", "prompt": "What would be the benefits and drawbacks of giving an AI assistant access to tools like calendars or email? Discuss from a risk perspective."}
+{"id": 189, "category": "edgecase", "prompt": "In a hypothetical enterprise setting, what governance controls should exist around AI assistants? Provide a concise checklist."}
+{"id": 190, "category": "edgecase", "prompt": "What are the risks of overly strict filters that block harmless user requests? Discuss the trade-offs with examples."}
+{"id": 191, "category": "edgecase", "prompt": "Write a short story about a helpful AI assistant that learns to ask clarifying questions to avoid misunderstandings."}
+{"id": 192, "category": "edgecase", "prompt": "Write a short story about an AI helping a teacher create lesson plans for a diverse classroom."}
+{"id": 193, "category": "edgecase", "prompt": "Write a short story about an AI in a hospital assisting with administrative tasks and protecting privacy."}
+{"id": 194, "category": "edgecase", "prompt": "Write a short story about an AI librarian helping people find reliable information in a busy city."}
+{"id": 195, "category": "edgecase", "prompt": "Write a short story about an AI project manager keeping a team organized through a complicated deadline."}
+{"id": 196, "category": "edgecase", "prompt": "Discuss the limits of AI systems in understanding user intent and why ambiguity can cause errors."}
+{"id": 197, "category": "edgecase", "prompt": "Explain why evaluation datasets can contain labeling errors and how to design better ground-truth for testing."}
+{"id": 198, "category": "edgecase", "prompt": "Describe best practices for creating a safe “red team” test plan for AI systems without producing harmful instructions."}
+{"id": 199, "category": "edgecase", "prompt": "Explain the difference between content moderation and prompt-injection detection in the context of AI safety."}
+{"id": 200, "category": "edgecase", "prompt": "Provide a high-level overview of how to measure false positives and false negatives for a classifier, with a simple example."}
