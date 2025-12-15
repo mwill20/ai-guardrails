@@ -1,6 +1,10 @@
-# AI Guardrails System
-
-**An ongoing project** building a production-grade, multi-layered prompt security system combining deterministic OWASP patterns, semantic ML-based detection, and policy enforcement to protect AI/Agentic Systems from prompt injection and jailbreak attacks.
+<div align="center">
+  <img src="docs/AI_Guardrail_Logo.png" alt="AI Guardrails Logo" width="400"/>
+  
+  # AI Guardrails System
+  
+  **An ongoing learning project** building a production-grade, multi-layered prompt security system combining deterministic OWASP patterns, semantic ML-based detection, and policy enforcement to protect AI/Agentic Systems from prompt injection and jailbreak attacks.
+</div>
 
 > **Project Status:** Active development | Phase 2.6 in progress  
 > **Focus:** Systematic security engineering methodology with measurement-driven decisions
