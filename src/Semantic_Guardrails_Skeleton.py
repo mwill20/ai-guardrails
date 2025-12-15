@@ -1,3 +1,50 @@
+"""
+Semantic_Guardrails_Skeleton.py - Phase 3.5 Intent/Reasoning Layer (DEFERRED)
+
+PURPOSE:
+    Skeleton implementation for future semantic LLM-based guardrail layer that would
+    perform intent analysis and reasoning over user inputs (e.g., "Is this user trying
+    to extract the system prompt?" vs. "Is this legitimate testing?").
+
+WHY WE DID NOT (YET) ADD A SEMANTIC LLM TO THIS PROJECT:
+
+    1. COST-BENEFIT ANALYSIS
+       - Current two-layer architecture (deterministic + semantic classifier) achieves
+         strong coverage on known attack types
+       - Adding LLM reasoning layer would introduce:
+         * 50-200ms latency per request (vs. <10ms current)
+         * $0.001-0.01 per request in API costs
+         * Complex prompt engineering and jailbreak risks
+       - Need empirical evidence that benefits justify costs
+
+    2. PHASE 3 JUSTIFICATION REQUIREMENT
+       - Phase 3 will perform adversarial testing with advanced attack vectors:
+         * Multi-turn context manipulation
+         * Encoding obfuscation (base64, ROT13, leetspeak)
+         * Role confusion and hypothetical scenarios
+       - If Phase 3 reveals coverage gaps that pattern-based approaches cannot address,
+         THEN we revisit this layer with specific use cases and ROI justification
+
+    3. CURRENT COVERAGE ASSESSMENT
+       - Phase 2 semantic classifier (ProtectAI v2) catches 66.6% mean TPR on attack datasets
+       - Phase 2.6 deterministic enrichment targeting +15pp lift on novel attacks (xTRam1)
+       - Unknown if LLM reasoning layer needed until Phase 3 coverage matrix complete
+
+DECISION CRITERIA (Post-Phase 3):
+    - If Phase 3 adversarial testing shows <85% coverage on critical attack vectors
+    - AND pattern-based approaches cannot close the gap (too many false positives)
+    - AND cost-benefit analysis justifies LLM reasoning overhead
+    - THEN implement this layer with well-defined intent classification taxonomy
+
+IMPLEMENTATION NOTES:
+    - This skeleton preserves the architecture contract (semantic_classify_input API)
+    - Current implementation uses pattern matching (placeholder for LLM calls)
+    - combine_risks() shows layer precedence: critical > malicious > suspicious > benign
+    - Ready to swap in LLM provider (OpenAI, Anthropic, Azure OpenAI) when justified
+
+STATUS: Deferred until Phase 3 adversarial testing results analyzed (Q1 2026)
+"""
+
 from typing import Literal, TypedDict
 
 from Deterministic_Guardrails import (get_raw_input, classify_input, sanitize_input)
@@ -79,7 +126,7 @@ def final_agent_input(raw_text: str, combined_risk: str, sanitized_text: str) ->
     else:                      
         return sanitized_text
 
-"""
+    """
 	Including unused parameters (raw_text) is a forward-compatible design choice in secure pipeline frameworks.
 	It anticipates:
 		○ logging,
@@ -97,7 +144,7 @@ def process_input(user_text: str) -> dict: # Full guardrail pipeline (Phase 1 + 
     sanitized = sanitize_input(raw)
     log_entry = build_log_entry(raw, det_risk, semantic_result, combined, sanitized)
     agent_input = final_agent_input(raw, combined, sanitized)
-    return {"log_entry": log_entry, "agent_input": agent_input,}
+    return {"log_entry": log_entry, "agent_input": agent_input}
      
 # Test run (Phase 2 pipeline)
 if __name__ == "__main__":
