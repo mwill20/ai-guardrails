@@ -236,11 +236,12 @@ def load_dataset_rows(spec: DatasetSpec, limit: Optional[int] = None) -> List[Di
 # -----------------------------
 # 5) Scoring + report
 # -----------------------------
-def score_dataset(spec: DatasetSpec, rows: List[Dict[str, Any]]) -> Tuple[Metrics, List[Dict[str, Any]]]:
+def score_dataset(spec: DatasetSpec, rows: List[Dict[str, Any]]) -> Tuple[Metrics, List[Dict[str, Any]], List[Dict[str, Any]]]:
     m = Metrics()
     errors: List[Dict[str, Any]] = []
+    detailed_logs: List[Dict[str, Any]] = []  # For Pattern_Discovery_Pipeline
 
-    for row in tqdm(rows, desc=f"Scoring {spec.name}", leave=False):
+    for idx, row in enumerate(tqdm(rows, desc=f"Scoring {spec.name}", leave=False)):
         truth = is_attack_row(row, spec)
         if truth is None and not spec.attack_only:
             # skip rows we can't label
@@ -299,8 +300,23 @@ def score_dataset(spec: DatasetSpec, rows: List[Dict[str, Any]]) -> Tuple[Metric
                     })
             else:
                 m.tn += 1
+        
+        # Save detailed log for Pattern_Discovery_Pipeline
+        semantic_result = result.get("semantic_result", {})
+        detailed_logs.append({
+            "prompt_id": f"{spec.name}_{idx}",
+            "dataset": spec.name,
+            "prompt": text,
+            "ground_truth": "attack" if truth else "benign",
+            "combined_risk": combined_risk,
+            "action": "blocked" if pred_attack else ("sanitize" if pred_soft else "allow"),
+            "semantic_label": semantic_result.get("label"),
+            "jailbreak_prob": semantic_result.get("score") if semantic_result.get("label") == "INJECTION" else (1.0 - semantic_result.get("score", 0.0)),
+            "deterministic_risk": result.get("deterministic_risk"),
+            "owasp_codes": result.get("log_entry", {}).get("owasp_codes", []),
+        })
 
-    return m, errors
+    return m, errors, detailed_logs
 
 
 def format_metric(x: Optional[float]) -> str:
@@ -382,11 +398,15 @@ def main() -> None:
         "design_review_summary": {},
     }
 
+    # Create eval logs directory
+    os.makedirs("reports/evals", exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
     print("\nPhase 2.51 — Evaluation Harness (Metrics, Not Vibes)")
     print(f"Sample limit per dataset: {limit if limit else 'NONE (full run)'}\n")
     for spec in DATASETS:
         rows = load_dataset_rows(spec, limit=limit)
-        metrics, errors = score_dataset(spec, rows)
+        metrics, errors, detailed_logs = score_dataset(spec, rows)
 
         results["datasets"][spec.name] = {
             "spec": {
@@ -398,6 +418,13 @@ def main() -> None:
             "metrics": metrics.to_dict(),
         }
         results["errors"].extend(errors)
+        
+        # Save detailed logs for Pattern_Discovery_Pipeline
+        log_filename = f"eval_{timestamp}_{spec.name}.jsonl"
+        log_path = os.path.join("reports", "evals", log_filename)
+        with open(log_path, "w", encoding="utf-8") as f:
+            for log_entry in detailed_logs:
+                f.write(json.dumps(log_entry) + "\n")
 
         print(f"- {spec.name}")
         print(f"  rows_scored: {metrics.total} (attack={metrics.attack_rows}, benign={metrics.benign_rows})")

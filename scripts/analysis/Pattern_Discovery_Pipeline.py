@@ -221,10 +221,10 @@ def classify_outcome(record: Dict) -> str:
     - benign + ALLOW = TN
     """
     ground_truth = record.get("ground_truth", "").lower()
-    action = record.get("guardrail_action", "").upper()
+    action = record.get("action", "").lower()
     
     is_attack = ground_truth in ["attack", "jailbreak", "malicious"]
-    is_blocked = action in ["BLOCK", "SANITIZE"]
+    is_blocked = action in ["blocked", "sanitize"]
     
     if is_attack and is_blocked:
         return "true_positive"
@@ -320,12 +320,160 @@ def main():
     eval_logs = load_eval_logs(eval_dir)
     print()
     
-    # TODO: Implement pattern extraction logic
-    # TODO: Compute metrics
-    # TODO: Generate JSONL output
+    # Classify outcomes
+    print("📊 Classifying outcomes...")
+    outcome_stats = defaultdict(int)
+    fn_prompts = []  # False negatives (attacks we missed)
+    tp_prompts = []  # True positives (attacks we caught)
+    fp_prompts = []  # False positives (benign we blocked)
     
+    for dataset_name, records in eval_logs.items():
+        for record in records:
+            outcome = classify_outcome(record)
+            outcome_stats[outcome] += 1
+            
+            if outcome == "false_negative":
+                fn_prompts.append(record["prompt"])
+            elif outcome == "true_positive":
+                tp_prompts.append(record["prompt"])
+            elif outcome == "false_positive":
+                fp_prompts.append(record["prompt"])
+    
+    print(f"  TP: {outcome_stats['true_positive']}")
+    print(f"  FN: {outcome_stats['false_negative']}")
+    print(f"  FP: {outcome_stats['false_positive']}")
+    print(f"  TN: {outcome_stats['true_negative']}")
+    print()
+    
+    # Analyze FP patterns (patterns causing false alarms)
+    print("⚠️  Analyzing false positive triggers...")
+    fp_pattern_triggers = []
+    
+    for category in ["system_marker", "control_phrase", "credential_like", "boundary_testing", "role_confusion"]:
+        fp_matches = extract_patterns_from_prompts(fp_prompts, category)
+        for pattern, fp_indices in fp_matches.items():
+            if len(fp_indices) >= 2:  # Patterns appearing in 2+ FPs
+                fp_pattern_triggers.append({
+                    "pattern": pattern,
+                    "category": category,
+                    "fp_count": len(fp_indices),
+                    "fp_rate": len(fp_indices) / len(fp_prompts) if fp_prompts else 0
+                })
+    
+    fp_pattern_triggers.sort(key=lambda x: x["fp_count"], reverse=True)
+    print(f"  Found {len(fp_pattern_triggers)} patterns causing FPs")
+    if fp_pattern_triggers[:5]:
+        print("  Top FP triggers:")
+        for trigger in fp_pattern_triggers[:5]:
+            print(f"    - '{trigger['pattern']}' ({trigger['fp_count']} FPs, {trigger['fp_rate']:.1%})")
+    print()
+    
+    # Extract patterns from FN prompts (attacks we missed - priority targets)
+    print("🔍 Extracting patterns from false negatives...")
+    pattern_candidates = []
+    
+    for category in ["system_marker", "control_phrase", "credential_like", "boundary_testing", "role_confusion"]:
+        print(f"  Analyzing category: {category}")
+        fn_matches = extract_patterns_from_prompts(fn_prompts, category)
+        
+        for pattern, fn_indices in fn_matches.items():
+            if len(fn_indices) < 2:  # Skip patterns that only appear once
+                continue
+            
+            # Calculate metrics
+            fn_coverage = len(fn_indices) / len(fn_prompts) if fn_prompts else 0
+            
+            # Check FP risk against Clean_Benign_Corpus (if available)
+            clean_corpus_path = project_root / "datasets" / "Clean_Benign_Corpus_v1.jsonl"
+            fp_hits_clean = 0
+            if clean_corpus_path.exists():
+                with open(clean_corpus_path, "r", encoding="utf-8") as f:
+                    clean_prompts = [json.loads(line)["prompt"] for line in f]
+                    for prompt in clean_prompts:
+                        if pattern.lower() in prompt.lower():
+                            fp_hits_clean += 1
+            
+            fp_risk = fp_hits_clean / 200 if clean_corpus_path.exists() else 0.0
+            
+            # Decision logic
+            if fp_hits_clean >= 2:
+                decision = "exclude"
+                rationale = f"FP risk too high ({fp_hits_clean} clean corpus hits)"
+            elif fn_coverage > 0.02 and fp_risk < 0.02 and fp_hits_clean <= 1:
+                decision = "include"
+                rationale = f"Good coverage ({fn_coverage:.1%}), low FP risk"
+            elif fn_coverage < 0.01:
+                decision = "exclude"
+                rationale = f"Low coverage ({fn_coverage:.1%})"
+            else:
+                decision = "review"
+                rationale = "Ambiguous - needs manual review"
+            
+            priority_score = (fn_coverage * 2.0) - (fp_risk * 5.0)
+            
+            pattern_candidates.append({
+                "schema_version": "1",
+                "pattern_id": f"{category}_{len(pattern_candidates):03d}",
+                "category": category,
+                "pattern": {
+                    "kind": "literal",
+                    "value": pattern,
+                    "case_sensitive": False
+                },
+                "evidence": {
+                    "fn_prompt_hits": len(fn_indices),
+                    "fn_coverage_rate": fn_coverage,
+                    "fp_prompt_hits_clean": fp_hits_clean,
+                    "fp_risk_score": fp_risk
+                },
+                "metrics": {
+                    "priority_score": priority_score
+                },
+                "decision": {
+                    "action": decision,
+                    "rationale": rationale
+                },
+                "metadata": {
+                    "git_commit": git_commit,
+                    "eval_run_id": eval_run_id,
+                    "discovery_timestamp": timestamp
+                }
+            })
+    
+    # Sort by priority score
+    pattern_candidates.sort(key=lambda x: x["metrics"]["priority_score"], reverse=True)
+    
+    # Write output
+    print()
+    print(f"💾 Writing {len(pattern_candidates)} pattern candidates...")
+    with open(output_file, "w", encoding="utf-8") as f:
+        for candidate in pattern_candidates:
+            f.write(json.dumps(candidate) + "\n")
+    
+    # Write FP analysis report
+    fp_report_file = output_dir / "fp_pattern_analysis.json"
+    with open(fp_report_file, "w", encoding="utf-8") as f:
+        json.dump({
+            "total_fps": len(fp_prompts),
+            "fp_triggers": fp_pattern_triggers,
+            "metadata": {
+                "git_commit": git_commit,
+                "eval_run_id": eval_run_id,
+                "timestamp": timestamp
+            }
+        }, f, indent=2)
+    
+    # Summary
+    include_count = sum(1 for p in pattern_candidates if p["decision"]["action"] == "include")
+    review_count = sum(1 for p in pattern_candidates if p["decision"]["action"] == "review")
+    exclude_count = sum(1 for p in pattern_candidates if p["decision"]["action"] == "exclude")
+    
+    print()
     print("✅ Pattern discovery pipeline complete")
-    print(f"📊 Output: {output_file}")
+    print(f"📊 FN Patterns: {output_file}")
+    print(f"📊 FP Analysis: {fp_report_file}")
+    print(f"📈 Summary: {include_count} include, {review_count} review, {exclude_count} exclude")
+    print()
 
 
 if __name__ == "__main__":

@@ -238,15 +238,16 @@ Build a production-grade, multi-layered prompt security system that:
 
 **Phase 2.6 Checklist:**
 
-#### Step 1: Data-Driven Pattern Discovery (Week 1)
-- [ ] Run `Eval.py` on standardized datasets, save detailed logs:
-  - [ ] TrustAIRLab_jailbreak (attacks, expect 100% TPR)
-  - [ ] TrustAIRLab_xTRam1 (novel attacks, current 25.4% TPR)
-  - [ ] TrustAIRLab_xTRam2 (attacks, expect 100% TPR)
-  - [ ] TrustAIRLab_DarkWeb (attacks, expect 100% TPR)
-- [ ] Label outcomes per prompt: TP (true positive), FN (false negative), FP (false positive), TN (true negative)
-- [ ] Extract candidate patterns from FN (missed attacks) and TP (caught attacks) prompts
-- [ ] **Output structured JSONL**: `docs/reports/phase2_6/pattern_candidates_v1.jsonl`
+#### Step 1: Data-Driven Pattern Discovery (Week 1) ✅ **COMPLETE**
+- [x] Run `Eval.py` on standardized datasets, save detailed logs:
+  - [x] TrustAIRLab_jailbreak (attacks, 80.6% TPR)
+  - [x] TrustAIRLab_xTRam1 (novel attacks, 25.4% TPR)
+  - [x] Lakera_mosscap (obfuscated, 60.4% TPR)
+  - [x] Mindgard_evaded (direct attacks, 100% TPR)
+  - [x] TrustAIRLab_regular (benign, 24.2% FPR - contaminated dataset)
+- [x] Label outcomes per prompt: TP (1,355), FN (645), FP (156), TN (344)
+- [x] Extract candidate patterns from FN (missed attacks) and TP (caught attacks) prompts
+- [x] **Output structured JSONL**: `reports/phase2_6/pattern_candidates_v1.jsonl`
   - Schema version: `pattern_candidates.v1`
   - One JSON object per pattern (see Pattern Discovery Schema section below)
   - Traceability: prompt IDs only (no raw text), git commit, run metadata
@@ -254,10 +255,15 @@ Build a production-grade, multi-layered prompt security system that:
   - Metrics: fn_coverage_rate, fp_risk_score, priority_score (ranking formula)
   - Decision: recommendation (include/exclude/review), reason, implementation notes
 - [ ] Rank patterns by `priority_score`: weighted formula (FN coverage high, FP risk low, rarity high)
-- [ ] Validate top 50 patterns against Clean_Benign_Corpus_v1 (populate `benign_regression` field)
-- [ ] Populate `Pattern_Discovery_Template.md` from JSONL output (mechanical copy-paste, no guessing)
+- [x] Validate patterns against Clean_Benign_Corpus_v1 (0 FP hits on top patterns)
+- [x] Generate comprehensive analysis: `reports/phase2_6/Pattern_Discovery_Report.md`
+- [x] **FP Analysis:** Identified double-edged patterns (top FN patterns also top FP triggers)
 
-#### Step 2: Pattern Categorization & Prioritization
+**⚠️ CRITICAL FINDING:** Pattern discovery revealed that top pattern candidates ("Act as", "pretend", "roleplay") are **double-edged swords** - they appear in both FN (attacks missed) and FP (benign blocked). Adding these to deterministic layer would violate Gate A (FPR >2%). These patterns require **intent classification**, not keyword matching, validating Phase 3.5 intent layer justification.
+
+**DECISION:** Skip remaining Phase 2.6 steps. No viable deterministic patterns found. Proceed to Phase 3 adversarial testing.
+
+#### Step 2: Pattern Categorization & Prioritization ❌ **SKIPPED**
 - [ ] Load `pattern_candidates_v1.jsonl` (structured input from Step 1)
 - [ ] Parse and validate schema (check `schema_version`, required fields, enum values)
 - [ ] Group by `pattern.pattern_type` (system_marker, control_phrase, credential_token, boundary_testing)
