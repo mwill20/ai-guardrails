@@ -45,7 +45,26 @@ ENV/
 *.onnx
 models/
 
-# Data files (optional - uncomment if datasets are large)
+# Generated reports and eval logs (reproducible artifacts)
+reports/evals/
+reports/phase2_6/
+reports/*.json
+reports/*.jsonl
+
+# Archive/old materials (not for public view)
+archive/
+
+# Temporary analysis outputs
+*.log
+*.tmp
+
+# Environment and secrets
+.env
+*.key
+*.pem
+credentials/
+
+# Data files (optional - uncomment if datasets are too large for repo)
 # datasets/*.csv
 # datasets/*.jsonl
 
