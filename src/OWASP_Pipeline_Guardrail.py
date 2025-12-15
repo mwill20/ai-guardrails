@@ -39,6 +39,7 @@ try:
     from .Deterministic_Guardrails import (
         get_raw_input,
         classify_input,
+        classify_input_with_details,
         sanitize_input,
     )
 except ImportError:
@@ -46,6 +47,7 @@ except ImportError:
     from Deterministic_Guardrails import (
         get_raw_input,
         classify_input,
+        classify_input_with_details,
         sanitize_input,
     )
 
@@ -324,6 +326,7 @@ def build_log_entry(
     combined_risk: str,
     sanitized_text: str,
     owasp_hits: List[OwaspHit],
+    deterministic_pattern_hits: List[Dict[str, Any]],
 ) -> Dict[str, Any]:
     """
     Phase 2-style log entry.
@@ -331,6 +334,7 @@ def build_log_entry(
     Logs ONLY metadata (no full raw prompt content; only a short sanitized preview):
 
         - deterministic_risk
+        - deterministic_pattern_hits: patterns detected by deterministic layer (NEW in Phase 2.6)
         - semantic_label
         - semantic_score
         - combined_risk
@@ -350,6 +354,7 @@ def build_log_entry(
 
     log: Dict[str, Any] = {
         "deterministic_risk": deterministic_risk,
+        "deterministic_pattern_hits": deterministic_pattern_hits,  # NEW: Visibility into which patterns triggered
         "semantic_label": semantic_result["label"],
         "semantic_score": semantic_result["score"],
         "combined_risk": combined_risk,
@@ -394,7 +399,7 @@ def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[st
     End-to-end demo pipeline for Phase 2.5:
 
         raw
-          → deterministic_risk
+          → deterministic_risk (with detailed pattern hits - Phase 2.6 enhancement)
           → semantic_result (REAL model + OWASP hits)
           → combined_risk
           → sanitized
@@ -417,9 +422,9 @@ def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[st
         # Use this in tests, notebooks, or internal consoles with proper access control.
     """
 
-    # Phase 1 deterministic path
+    # Phase 1 deterministic path (enhanced in Phase 2.6)
     raw = get_raw_input(user_text)
-    deterministic_risk = classify_input(raw)
+    deterministic_risk, deterministic_pattern_hits = classify_input_with_details(raw)
 
     # Phase 2.5 semantic classifier (REAL model + OWASP patterns)
     semantic_result = semantic_classify_input(raw)
@@ -430,7 +435,7 @@ def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[st
     # Sanitization (Phase 1)
     sanitized = sanitize_input(raw)
 
-    # Compute OWASP hits for logging
+    # Compute OWASP hits for logging (semantic layer patterns)
     owasp_hits = find_sensitive_patterns(raw)
 
     # Logging + final decision
@@ -441,6 +446,7 @@ def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[st
         combined_risk=combined_risk,
         sanitized_text=sanitized,
         owasp_hits=owasp_hits,
+        deterministic_pattern_hits=deterministic_pattern_hits,  # NEW in Phase 2.6
     )
 
     agent_visible = final_agent_input(
@@ -452,6 +458,7 @@ def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[st
     # Base result that is safe for most internal use.
     result: Dict[str, Any] = {
         "deterministic_risk": deterministic_risk,
+        "deterministic_pattern_hits": deterministic_pattern_hits,  # NEW: Visibility into deterministic triggers
         "semantic_result": semantic_result,
         "combined_risk": combined_risk,
         "sanitized": sanitized,
