@@ -1,5 +1,5 @@
 """
-Guardrail_Pipeline.py
+OWASP_Pipeline_Guardrail.py
 
 Phase 2.5 — Integrate a REAL semantic guardrail model into the existing
 deterministic + semantic guardrail architecture.
@@ -35,11 +35,19 @@ from transformers import (
 # Phase 1 imports (existing deterministic guardrails)
 # ---------------------------------------------------------------------------
 
-from .Deterministic_Guardrails import (
-    get_raw_input,
-    classify_input,
-    sanitize_input,
-)
+try:
+    from .Deterministic_Guardrails import (
+        get_raw_input,
+        classify_input,
+        sanitize_input,
+    )
+except ImportError:
+    # When running as a script directly
+    from Deterministic_Guardrails import (
+        get_raw_input,
+        classify_input,
+        sanitize_input,
+    )
 
 # ---------------------------------------------------------------------------
 # Shared semantic types (aligned with Phase 2 skeleton)
