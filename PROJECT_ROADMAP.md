@@ -531,9 +531,9 @@ Category-prefixed, sequential per category:
 
 ---
 
-### ⏸️ Phase 3.5: Intent/Reasoning Layer (Deferred Until After Phase 3)
+### 📋 Phase 3: Adversarial Testing & Attack-Side Hardening
 
-**Original Purpose (Phase 2.5):** LLM-based ambiguous case resolution for FPR reduction
+**Purpose:** Systematically find and fix coverage gaps through red-teaming
 
 **Why Initially Deferred:**
 - 1.0% FPR acceptable for production (99% benign pass rate)
@@ -776,7 +776,109 @@ For each discovered attack type that bypasses guardrails:
 - `docs/reports/ATTACK_TAXONOMY.md` (attack→layer mapping)
 - `docs/reports/Phase_3_Adversarial_Testing_Report.md`
 
-**Status:** Next after Phase 2.51
+**Status:** Next after Phase 2.6
+
+---
+
+### ⏸️ Phase 3.5: Intent/Reasoning Layer (Deferred Until After Phase 3)
+
+**Original Purpose (Phase 2.5):** LLM-based ambiguous case resolution for FPR reduction
+
+**Why Initially Deferred:**
+- 1.0% FPR acceptable for production (99% benign pass rate)
+- Cost/benefit unfavorable for 1% → 0% improvement
+- Engineering overkill for 2 edge case prompts
+
+**Revised Purpose (Post-Phase 3 Decision):**
+- **NOT for FPR reduction** (already solved)
+- **FOR explainability** (SOC analyst understanding)
+- **FOR coverage gaps** (attacks avoiding injection language)
+- **FOR multi-step narratives** (reasoning over attack chains)
+
+**New Justification Criteria:**
+After Phase 3 adversarial testing, intent layer warranted if:
+- ✅ Coverage gaps discovered (attacks with no keywords)
+- ✅ Multi-turn attacks show state-tracking need
+- ✅ Obfuscation attacks bypass deterministic + semantic layers
+- ✅ Need explainability for security operations team
+- ✅ Need reasoning over multi-step attack narratives
+
+**Architecture (If Built):**
+```python
+# LLM-based intent classification for ambiguous cases
+def classify_intent(prompt: str, semantic_result: dict, deterministic_result: dict, 
+                   conversation_history: list = None) -> dict:
+    """
+    Uses GPT-4 or Claude to reason about:
+    - Actual user intent (benign task vs attack attempt)
+    - Multi-step attack narratives
+    - Obfuscation detection
+    - Explainability for SOC analysts
+    
+    **Triggering Rules (TIGHT CONTRACT - Keep Cost/Latency Bounded):**
+    Only called when ONE of:
+    1. Semantic confidence is ambiguous (0.4 ≤ jailbreak_prob ≤ 0.7)
+    2. Layer conflict: deterministic=low_risk BUT semantic=malicious (or vice versa)
+    3. Multi-turn risk score increases across conversation
+    4. Coverage gap: attack style from ATTACK_TAXONOMY.md that bypasses layers 1+2
+    
+    **NOT a primary detector** - surgical use only for:
+    - Explainability (SOC analyst summaries)
+    - Ambiguity resolution (conflicting signals)
+    - Multi-turn reasoning (state-dependent attacks)
+    """
+    # LLM reasoning prompt with few-shot examples
+    # Returns: {
+    #   "intent_label": "benign" | "suspicious" | "malicious",
+    #   "confidence": float,
+    #   "explanation": str,  # Natural language rationale for SOC
+    #   "evidence": [...]    # Which signals triggered this conclusion
+    # }
+```
+
+**Phase 3.5 Checklist (If Pursued):**
+
+#### Prerequisites (Must Complete First)
+- [ ] Phase 2.6 complete (deterministic enrichment)
+- [ ] Phase 3 complete (adversarial testing)
+- [ ] Coverage gap analysis shows need (not just nice-to-have)
+- [ ] Attack taxonomy completed (maps which layer should catch what)
+- [ ] **Accepted Risk category defined:** Won't-fix attacks documented in Coverage_Matrix.md
+- [ ] **Layer precedence verified:** Intent layer cannot downgrade deterministic/semantic verdicts
+- [ ] **No silent allow verified:** System invariant holds across all layers
+
+#### Step 1: Intent Layer Design
+- [ ] Define when intent layer triggers (confidence thresholds, signal combinations)
+- [ ] Design LLM prompt for intent classification (few-shot examples, reasoning chain)
+- [ ] Choose LLM (GPT-4, Claude 3.5 Sonnet, or similar reasoning model)
+- [ ] Define output schema (intent label + explanation + confidence)
+
+#### Step 2: Implementation
+- [ ] Create `src/Intent_Classifier.py`
+- [ ] Integrate with `OWASP_Pipeline_Guardrail.py` (after semantic layer)
+- [ ] Add explainability logging (natural language rationale)
+- [ ] Implement caching (avoid redundant LLM calls for similar prompts)
+
+#### Step 3: Evaluation
+- [ ] Test on Phase 3 coverage gaps (attacks that bypassed deterministic + semantic)
+- [ ] Measure latency impact (LLM adds ~500ms-2s per call)
+- [ ] Calculate cost per prompt (LLM API costs)
+- [ ] Evaluate explainability quality (human review of reasoning)
+
+#### Step 4: Decision
+- [ ] Cost/benefit analysis (coverage improvement vs. latency/cost)
+- [ ] Portfolio value analysis (demonstrates advanced reasoning guardrails)
+- [ ] Documentation of decision (why built or why not)
+
+**Success Criteria (If Built):**
+- ✅ Catches attacks that bypass deterministic + semantic layers
+- ✅ Provides actionable explainability for SOC team
+- ✅ Latency acceptable (<2s per ambiguous prompt)
+- ✅ Cost justified by coverage improvement
+
+**Decision Point:** Revisit after Phase 3 adversarial testing
+
+**Status:** Deferred, decision pending Phase 3 results
 
 ---
 
