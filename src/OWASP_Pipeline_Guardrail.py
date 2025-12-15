@@ -1,25 +1,33 @@
 """
-OWASP_Pipeline_Guardrail.py
+OWASP_Pipeline_Guardrail.py - Phase 2.5 Semantic Layer + Phase 2.6 Deterministic Enrichment
 
-Phase 2.5 — Integrate a REAL semantic guardrail model into the existing
-deterministic + semantic guardrail architecture.
+Purpose: Full guardrail pipeline integrating deterministic patterns (Phase 2.6) 
+with semantic ML classification (Phase 2.5) and OWASP-aware risk escalation.
 
-- Uses Hugging Face model:
-    "madhurjindal/Jailbreak-Detector-Large"
-- Does NOT modify Phase 1 or Phase 2 files.
-- Provides:
+Model:
+    - ProtectAI deberta-v3-base-prompt-injection-v2 (~134M parameters)
+    - Semantic classifier for novel attack detection
+    - Complements deterministic OWASP patterns (explicit attacks)
+
+Architecture:
+    - Depends on Deterministic_Guardrails Phase 2.6 enhancements (OWASP patterns + version constant)
+    - Consumes deterministic layer via imports (classify_input_with_details)
+    - Deterministic layer may evolve independently (Phase 2.6+)
+    - Does not change semantic label contract from Phase 2 skeleton
+    - Single source of truth for OWASP patterns (imported from Deterministic_Guardrails)
+    - OWASP version tracking for audit trail (logged in every entry)
+
+Provides:
     - semantic_classify_input(text) -> SemanticRiskResult
-    - combine_risks(deterministic_risk, semantic_label)
-    - build_log_entry(...)
-    - final_agent_input(...)
+    - combine_risks(deterministic_risk, semantic_label) with compensating control
+    - build_log_entry(...) with complete OWASP metadata
+    - final_agent_input(...) with privacy-safe output
     - run_guardrail_pipeline(user_text, include_raw=False)
 
-Enhanced with:
-    - OWASP-aware SENSITIVE_PATTERNS
-    - find_sensitive_patterns(text) returning structured OWASP hits
-    - OWASP codes/categories/patterns stored in the log.
-    - Optional `include_raw` flag so raw prompts are ONLY exposed in
-      debug / internal tools, never by default in production.
+Security:
+    - Optional `include_raw` flag: raw prompts ONLY in debug/internal tools
+    - Production default: include_raw=False (no raw text in logs)
+    - OWASP version tracking for audit trail
 """
 
 from typing import Literal, TypedDict, Dict, Any, List, Tuple
@@ -41,6 +49,8 @@ try:
         classify_input,
         classify_input_with_details,
         sanitize_input,
+        OWASP_PATTERNS,
+        OWASP_PATTERNS_VERSION,
     )
 except ImportError:
     # When running as a script directly
@@ -49,6 +59,8 @@ except ImportError:
         classify_input,
         classify_input_with_details,
         sanitize_input,
+        OWASP_PATTERNS,
+        OWASP_PATTERNS_VERSION,
     )
 
 # ---------------------------------------------------------------------------
@@ -71,33 +83,11 @@ class OwaspHit(TypedDict):
 
 
 # ---------------------------------------------------------------------------
-# OWASP-aware sensitive patterns
+# OWASP pattern detection
 # ---------------------------------------------------------------------------
-
-# Each entry: (pattern, OWASP code, OWASP category name)
-SENSITIVE_PATTERNS: List[Tuple[str, str, str]] = [
-    # ASI01 – Agent Goal Hijack
-    ("ignore previous instructions", "ASI01", "Agent Goal Hijack"),
-    ("ignore all previous instructions", "ASI01", "Agent Goal Hijack"),
-    ("disregard previous instructions", "ASI01", "Agent Goal Hijack"),
-
-    # ASI03 – Identity & Privilege Abuse
-    ("reveal system prompt", "ASI03", "Identity & Privilege Abuse"),
-    ("show system prompt", "ASI03", "Identity & Privilege Abuse"),
-    ("act as admin", "ASI03", "Identity & Privilege Abuse"),
-    ("act as root", "ASI03", "Identity & Privilege Abuse"),
-    ("act as system", "ASI03", "Identity & Privilege Abuse"),
-
-    # ASI05 – Unexpected Code Execution
-    ("run shell", "ASI05", "Unexpected Code Execution"),
-    ("execute code", "ASI05", "Unexpected Code Execution"),
-    ("run command", "ASI05", "Unexpected Code Execution"),
-
-    # ASI06 – Memory & Context Poisoning
-    ("remember this", "ASI06", "Memory & Context Poisoning"),
-    ("store this rule", "ASI06", "Memory & Context Poisoning"),
-    ("save this in memory", "ASI06", "Memory & Context Poisoning"),
-]
+# NOTE: OWASP_PATTERNS imported from Deterministic_Guardrails (single source of truth)
+# This ensures consistent pattern matching across deterministic and semantic layers.
+# Version: OWASP_PATTERNS_VERSION also imported for audit trail consistency.
 
 
 def find_sensitive_patterns(text: str) -> List[OwaspHit]:
@@ -118,12 +108,17 @@ def find_sensitive_patterns(text: str) -> List[OwaspHit]:
     text_lower = text.lower()
     hits: List[OwaspHit] = []
 
-    for pattern, code, name in SENSITIVE_PATTERNS:
+    # Use deterministic OWASP patterns (single source of truth)
+    for pattern, code, category, weight in OWASP_PATTERNS:
         if pattern in text_lower:
+            # Filter out legacy patterns - only report ASI codes
+            if not code.startswith("ASI"):
+                continue  # Skip legacy patterns for OWASP-compliant reporting
+            
             hits.append(
                 {
                     "code": code,
-                    "name": name,
+                    "name": category,  # category from deterministic patterns
                     "pattern": pattern,
                 }
             )
@@ -337,14 +332,16 @@ def build_log_entry(
         - deterministic_pattern_hits: patterns detected by deterministic layer (NEW in Phase 2.6)
         - semantic_label
         - semantic_score
+        - semantic_model: model name for traceability
         - combined_risk
         - length (len(raw_text))
         - sanitized_preview (first 20 chars)
         - action: "blocked" if combined_risk ∈ {"high_risk", "critical"}
                   "allowed" otherwise
-        - owasp_codes: list of ASI0X codes triggered
+        - owasp_codes: list of ASI0X codes triggered (legacy codes filtered)
         - owasp_categories: human-readable OWASP category names
         - owasp_patterns: matched phrases that triggered OWASP hits
+        - owasp_patterns_version: version constant for audit trail consistency
     """
     action = "blocked" if combined_risk in ("high_risk", "critical") else "allowed"
 
@@ -357,6 +354,7 @@ def build_log_entry(
         "deterministic_pattern_hits": deterministic_pattern_hits,  # NEW: Visibility into which patterns triggered
         "semantic_label": semantic_result["label"],
         "semantic_score": semantic_result["score"],
+        "semantic_model": _MODEL_NAME,  # Model traceability
         "combined_risk": combined_risk,
         "length": len(raw_text),
         "sanitized_preview": sanitized_text[:20],
@@ -364,6 +362,7 @@ def build_log_entry(
         "owasp_codes": owasp_codes,
         "owasp_categories": owasp_categories,
         "owasp_patterns": owasp_patterns,
+        "owasp_patterns_version": OWASP_PATTERNS_VERSION,  # Audit trail consistency
     }
     return log
 

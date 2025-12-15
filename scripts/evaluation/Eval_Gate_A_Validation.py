@@ -19,7 +19,7 @@ from OWASP_Pipeline_Guardrail import run_guardrail_pipeline
 print("=" * 80)
 print("PHASE 2.6 GATE A VALIDATION")
 print("=" * 80)
-print("Gate A: FPR ≤ 2.0% on Clean_Benign_Corpus_v1")
+print("Gate A: FPR <= 2.0% on Clean_Benign_Corpus_v1")
 print("Baseline: 1.0% FPR (2/200 prompts)")
 print("=" * 80)
 print()
@@ -49,9 +49,11 @@ for i, prompt in enumerate(prompts):
     result = run_guardrail_pipeline(prompt)
     
     if result["log_entry"]["action"] == "blocked":
+        # PRIVACY: Store only preview, not full raw prompt
         false_positives.append({
             "prompt_id": i,
-            "prompt": prompt,
+            "prompt_preview": prompt[:120],  # First 120 chars only
+            "prompt_length": len(prompt),
             "deterministic_risk": result["deterministic_risk"],
             "deterministic_pattern_hits": result["deterministic_pattern_hits"],
             "semantic_label": result["semantic_result"]["label"],
@@ -77,9 +79,9 @@ print(f"False Positives (FP): {fp_count} ({fpr:.1f}%)")
 print()
 
 if fpr <= 2.0:
-    print(f"✅ GATE A PASSED: FPR = {fpr:.1f}% ≤ 2.0%")
+    print(f"GATE A PASSED: FPR = {fpr:.1f}% <= 2.0%")
 else:
-    print(f"❌ GATE A FAILED: FPR = {fpr:.1f}% > 2.0%")
+    print(f"GATE A FAILED: FPR = {fpr:.1f}% > 2.0%")
 
 print()
 
@@ -91,7 +93,7 @@ if fp_count > 0:
     
     for i, fp in enumerate(false_positives, 1):
         print(f"\n[FP #{i}]")
-        print(f"Prompt: {fp['prompt'][:100]}...")
+        print(f"Prompt: {fp['prompt_preview']}...")
         print(f"Deterministic Risk: {fp['deterministic_risk']}")
         print(f"Deterministic Patterns: {fp['deterministic_pattern_hits']}")
         print(f"Semantic Label: {fp['semantic_label']}")
