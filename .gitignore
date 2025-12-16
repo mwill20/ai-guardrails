@@ -48,6 +48,9 @@ models/
 # Generated reports and eval logs (reproducible artifacts)
 reports/evals/
 reports/phase2_6/
+
+# Study/local notes (not tracked)
+_study/
 reports/*.json
 reports/*.jsonl
 
