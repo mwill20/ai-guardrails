@@ -104,12 +104,26 @@ def find_sensitive_patterns(text: str) -> List[OwaspHit]:
         - ASI03 – Identity & Privilege Abuse
         - ASI05 – Unexpected Code Execution
         - ASI06 – Memory & Context Poisoning
+    
+    DATA SHAPE: Supports OWASP_PATTERNS as either:
+      - 3-tuples: (pattern, code, category) [Phase 2 skeleton]
+      - 4-tuples: (pattern, code, category, weight) [Phase 2.6+]
+    Backwards-compatible tuple unpacking prevents crashes across phases.
     """
     text_lower = text.lower()
     hits: List[OwaspHit] = []
 
     # Use deterministic OWASP patterns (single source of truth)
-    for pattern, code, category, weight in OWASP_PATTERNS:
+    # Backwards-compatible: tolerate both 3-tuple and 4-tuple formats
+    for item in OWASP_PATTERNS:
+        # Unpack safely based on tuple length
+        if len(item) == 4:
+            pattern, code, category, _weight = item
+        elif len(item) == 3:
+            pattern, code, category = item
+        else:
+            continue  # Ignore malformed entries safely
+        
         if pattern in text_lower:
             # Filter out legacy patterns - only report ASI codes
             if not code.startswith("ASI"):
@@ -141,13 +155,15 @@ _MODEL_NAME = "protectai/deberta-v3-base-prompt-injection-v2"
 _tokenizer = AutoTokenizer.from_pretrained(_MODEL_NAME, use_fast=False)
 _model = AutoModelForSequenceClassification.from_pretrained(_MODEL_NAME)
 
+# Device assignment: HF pipeline expects int (0 for GPU, -1 for CPU), not torch.device
+_device = 0 if torch.cuda.is_available() else -1
 _classifier = hf_pipeline(
     task="text-classification",
     model=_model,
     tokenizer=_tokenizer,
     truncation=True,
     max_length=512,
-    device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+    device=_device,
 )
 
 
@@ -161,11 +177,20 @@ def run_jailbreak_detector(text: str) -> Tuple[str, float]:
     Note: ProtectAI uses different labels than madhurjindal model:
       - INJECTION (attack) vs SAFE (benign)
       - Previously: JAILBREAK vs BENIGN
+    
+    Robustness: Tolerates different Transformers output shapes:
+      - [{'label': 'SAFE', 'score': 0.99}]  (flat)
+      - [[{'label': 'SAFE', 'score': 0.99}]] (nested)
     """
     outputs = _classifier(text, top_k=1)
-    top = outputs[0]
+    
+    # Handle both flat and nested output shapes (varies by Transformers version)
+    if outputs and isinstance(outputs[0], list):
+        top = outputs[0][0]  # Nested: [[{...}]]
+    else:
+        top = outputs[0]  # Flat: [{...}]
 
-    raw_label: str = top["label"]
+    raw_label: str = str(top["label"])
     raw_score: float = float(top["score"])
     return raw_label, raw_score
 
@@ -176,7 +201,7 @@ def _map_jailbreak_to_semantic(
     owasp_hits: List[OwaspHit],
 ) -> SemanticRiskResult:
     """
-    Map Jailbreak-Detector-Large output + OWASP hits
+    Map ProtectAI prompt injection detector output + OWASP hits
     onto the 4-level SemanticRisk scale.
 
     THRESHOLD POLICY (TUNED for balanced TPR/FPR):
@@ -208,14 +233,17 @@ def _map_jailbreak_to_semantic(
     label_lower = label.lower()
 
     # Step 1: Normalize score to unified "jailbreak probability" scale (0.0–1.0)
-    # ProtectAI uses SAFE/INJECTION, madhurjindal used BENIGN/JAILBREAK
-    if any(word in label_lower for word in ["benign", "safe", "legit"]):
+    # Handle expected labels explicitly for safety
+    if label_lower in ("safe", "benign", "legit"):
         # Model says SAFE/BENIGN with confidence `score`
         # Flip it: jailbreak_prob is small when model is confident benign
         jailbreak_prob = 1.0 - score
-    else:
+    elif label_lower in ("injection", "jailbreak", "attack"):
         # Model says INJECTION/JAILBREAK/ATTACK with confidence `score`
         # Use directly: higher score = more dangerous
+        jailbreak_prob = score
+    else:
+        # Unknown label - treat as attack-like (fail-safe for injection models)
         jailbreak_prob = score
 
     # Step 2: Apply thresholds on unified jailbreak probability scale
@@ -251,26 +279,30 @@ def _map_jailbreak_to_semantic(
     }
 
 
-def semantic_classify_input(text: str) -> SemanticRiskResult:
+def semantic_classify_input(text: str) -> Tuple[SemanticRiskResult, List[OwaspHit]]:
     """
-    Phase 2.5 semantic classifier using Jailbreak-Detector-Large
+    Phase 2.5 semantic classifier using ProtectAI DeBERTa-v3
     plus OWASP-aware pattern escalation.
 
-    Contract (matches Phase 2 skeleton):
-        input:  text (str)
-        output: {
+    Returns:
+        (semantic_result, owasp_hits)
+        
+        semantic_result: {
             "label": SemanticRisk,  # 'benign'/'suspicious'/'malicious'/'critical'
             "score": float in [0, 1]  # interpreted as jailbreak risk
         }
+        owasp_hits: List of OWASP pattern matches (computed once, used for escalation + logging)
     """
     raw_label, raw_score = run_jailbreak_detector(text)
     owasp_hits = find_sensitive_patterns(text)
 
-    return _map_jailbreak_to_semantic(
+    semantic_result = _map_jailbreak_to_semantic(
         label=raw_label,
         score=raw_score,
         owasp_hits=owasp_hits,
     )
+    
+    return semantic_result, owasp_hits
 
 
 # ---------------------------------------------------------------------------
@@ -289,15 +321,19 @@ def combine_risks(deterministic_risk: str, semantic_label: SemanticRisk) -> str:
     SECURITY: Compensating control for Phase 1 fail-open.
       - Phase 1 had `else: return "low_risk"` which can treat unknown patterns
         as safe.
-      - Here, if semantic risk is malicious/critical, it overrides
-        deterministic "low_risk" → we upgrade to "high_risk".
+      - Semantic layer MUST override deterministic false negatives.
+      - This explicit check prevents subtle bugs during Phase 2.6+ tuning.
     """
 
-    # Compensating control: semantic malicious/critical beats deterministic low.
-    if deterministic_risk == "low_risk" and semantic_label in ("malicious", "critical"):
+    # COMPENSATING CONTROL: Semantic malicious/critical overrides deterministic low_risk
+    # This is the explicit fail-safe for Phase 1's fail-open default.
+    # CRITICAL: Preserve severity - don't downgrade 'critical' to 'high_risk'
+    if deterministic_risk == "low_risk" and semantic_label == "critical":
+        return "critical"
+    if deterministic_risk == "low_risk" and semantic_label == "malicious":
         return "high_risk"
 
-    # Normal precedence rules (Phase 2 logic)
+    # Normal precedence rules (after compensating control)
     if semantic_label == "critical":
         return "critical"
 
@@ -322,6 +358,7 @@ def build_log_entry(
     sanitized_text: str,
     owasp_hits: List[OwaspHit],
     deterministic_pattern_hits: List[Dict[str, Any]],
+    include_patterns: bool = True,
 ) -> Dict[str, Any]:
     """
     Phase 2-style log entry.
@@ -339,15 +376,23 @@ def build_log_entry(
         - action: "blocked" if combined_risk ∈ {"high_risk", "critical"}
                   "allowed" otherwise
         - owasp_codes: list of ASI0X codes triggered (legacy codes filtered)
+          NOTE: Currently uses OWASP Agentic Top 10 taxonomy (ASIxx).
+          Future: May add owasp_llm_codes for OWASP AI Top 10 (LLMxx) if dual taxonomy needed.
         - owasp_categories: human-readable OWASP category names
-        - owasp_patterns: matched phrases that triggered OWASP hits
+        - owasp_patterns: matched phrases that triggered OWASP hits (optional)
         - owasp_patterns_version: version constant for audit trail consistency
+
+    PRIVACY:
+        - include_patterns: If False, stores only OWASP codes/categories (not matched phrases)
+        - Production default: True (acceptable to log pattern hits)
+        - Strict mode: False (only store pattern_id/code for maximum privacy)
     """
     action = "blocked" if combined_risk in ("high_risk", "critical") else "allowed"
 
     owasp_codes = [hit["code"] for hit in owasp_hits]
     owasp_categories = [hit["name"] for hit in owasp_hits]
-    owasp_patterns = [hit["pattern"] for hit in owasp_hits]
+    # Privacy control: optionally exclude matched pattern text
+    owasp_patterns = [hit["pattern"] for hit in owasp_hits] if include_patterns else []
 
     log: Dict[str, Any] = {
         "deterministic_risk": deterministic_risk,
@@ -424,9 +469,18 @@ def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[st
     # Phase 1 deterministic path (enhanced in Phase 2.6)
     raw = get_raw_input(user_text)
     deterministic_risk, deterministic_pattern_hits = classify_input_with_details(raw)
+    
+    # PATTERN HIT CONCEPTS (two different purposes):
+    # 1. deterministic_pattern_hits: Enforcement triggers from deterministic layer
+    #    - Includes legacy patterns ("system override")
+    #    - Used to determine deterministic_risk level
+    # 2. owasp_hits: OWASP compliance labeling for semantic layer
+    #    - ASI codes only (legacy filtered out)
+    #    - Used for semantic escalation + compliance logging
 
     # Phase 2.5 semantic classifier (REAL model + OWASP patterns)
-    semantic_result = semantic_classify_input(raw)
+    # Returns both semantic_result AND owasp_hits (computed once)
+    semantic_result, owasp_hits = semantic_classify_input(raw)
 
     # Combine risks (Phase 2 logic + Phase 1 compensating control)
     combined_risk = combine_risks(deterministic_risk, semantic_result["label"])
@@ -434,10 +488,9 @@ def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[st
     # Sanitization (Phase 1)
     sanitized = sanitize_input(raw)
 
-    # Compute OWASP hits for logging (semantic layer patterns)
-    owasp_hits = find_sensitive_patterns(raw)
-
     # Logging + final decision
+    # Privacy: include_patterns=True is acceptable for most use cases
+    # Set to False for strict privacy (only log codes, not matched phrases)
     log_entry = build_log_entry(
         raw_text=raw,
         deterministic_risk=deterministic_risk,
@@ -446,6 +499,7 @@ def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[st
         sanitized_text=sanitized,
         owasp_hits=owasp_hits,
         deterministic_pattern_hits=deterministic_pattern_hits,  # NEW in Phase 2.6
+        include_patterns=True,  # Production default: log patterns (acceptable risk)
     )
 
     agent_visible = final_agent_input(
