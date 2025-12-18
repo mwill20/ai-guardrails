@@ -1,4 +1,8 @@
 """Test all consistency fixes in OWASP_Pipeline_Guardrail.py"""
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from src.OWASP_Pipeline_Guardrail import run_guardrail_pipeline
 import json
 

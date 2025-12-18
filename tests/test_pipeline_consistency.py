@@ -1,4 +1,8 @@
 """Test OWASP_Pipeline_Guardrail with imported patterns"""
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from src.OWASP_Pipeline_Guardrail import run_guardrail_pipeline, OWASP_PATTERNS, OWASP_PATTERNS_VERSION
 
 print(f"✅ Version: {OWASP_PATTERNS_VERSION}")

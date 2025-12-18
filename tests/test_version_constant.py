@@ -1,4 +1,8 @@
 """Quick test to verify OWASP_PATTERNS_VERSION is logged correctly"""
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from src.Deterministic_Guardrails import (
     classify_input_with_details,
     build_log_entry,
