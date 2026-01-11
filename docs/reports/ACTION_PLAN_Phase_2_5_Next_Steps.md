@@ -1,4 +1,4 @@
-# Phase 2.5 Action Plan — Next Steps
+# Phase 3 Action Plan — Next Steps
 
 ## Overview
 
@@ -11,7 +11,7 @@
 
 ## Three-Phase Execution Plan
 
-### Phase 2.5.1 — Code Hardening (This Week)
+### Phase 4 — Code Hardening (This Week)
 
 **Duration:** 2-3 hours  
 **Goal:** Make current implementation production-safe and maintainable  
@@ -83,10 +83,10 @@ import logging
 # In run_jailbreak_detector()
 logging.debug(f"Jailbreak detector: model={_MODEL_NAME}, "
               f"label={label}, score={score:.4f}, "
-              f"normalized_prob={jailbreak_prob:.4f}")
+              f"normalized_prob={semantic_score:.4f}")
 
 # In _map_jailbreak_to_semantic()
-logging.debug(f"Semantic mapping: jailbreak_prob={jailbreak_prob:.4f}, "
+logging.debug(f"Semantic mapping: semantic_score={semantic_score:.4f}, "
               f"semantic_risk={risk_level}, threshold={threshold}")
 ```
 
@@ -139,7 +139,7 @@ See: WORK_LOG_Phase2_Semantic_Model_Selection.md
 
 ---
 
-### Phase 2.5.2 — Clean Corpus & FPR Measurement (Next Week)
+### Phase 3 — Clean Corpus & FPR Measurement (Next Week)
 
 **Duration:** 2-3 days  
 **Goal:** Build clean benign test set and measure true false positive rate  
@@ -222,7 +222,7 @@ for item in corpus:
         "category": item["category"],
         "prompt": item["prompt"],
         "action": result["action"],
-        "jailbreak_prob": result.get("jailbreak_prob"),
+        "semantic_score": result.get("semantic_score"),
         "risk_level": result.get("risk_level")
     })
     
@@ -260,7 +260,7 @@ For each blocked prompt in `reports/Blocked_Benign_For_Review.jsonl`, classify:
 
 **Process:**
 1. Read prompt
-2. Check jailbreak_prob score
+2. Check semantic_score score
 3. Classify: TP / FP / AMB
 4. Add brief reasoning
 
@@ -363,7 +363,7 @@ Create `reports/FPR_Measurement_Clean_Corpus.md`:
 
 ---
 
-### Phase 2.5.3 / 2.6 — Intent Layer Decision (Week 3)
+### Phase 6 — Intent Layer Decision (Week 3)
 
 **Duration:** 1 week (if implemented)  
 **Goal:** Decide if semantic intent layer is justified, implement if so  
@@ -374,7 +374,7 @@ Create `reports/FPR_Measurement_Clean_Corpus.md`:
 **If True FPR < 3%:**
 - **Decision:** ❌ Skip intent layer for now
 - **Rationale:** Baseline is good enough (97%+ benign pass rate)
-- **Next Step:** Focus on attack detection improvements (Phase 3 adversarial testing)
+- **Next Step:** Focus on attack detection improvements (Phase 5 adversarial testing)
 
 **If True FPR 3-8%:**
 - **Decision:** ✅ Implement lightweight intent layer
@@ -399,7 +399,7 @@ Create `docs/Phase_2_6_Intent_Layer_Design.md`:
 
 ## Trigger Condition
 Only invoke for prompts in ambiguous band:
-- 0.40 <= jailbreak_prob <= 0.65
+- 0.40 <= semantic_score <= 0.65
 
 ## LLM Classifier
 - Model: GPT-4o-mini or Gemini 1.5 Flash (cheap, fast)
@@ -432,13 +432,13 @@ Create `Intent_Layer.py`:
 ```python
 import openai
 
-def analyze_intent(prompt: str, jailbreak_prob: float) -> dict:
+def analyze_intent(prompt: str, semantic_score: float) -> dict:
     """
     LLM-based intent classification for ambiguous prompts.
     
     Args:
         prompt: User input
-        jailbreak_prob: Detector score (0.0-1.0)
+        semantic_score: Detector score (0.0-1.0)
     
     Returns:
         {
@@ -451,7 +451,7 @@ def analyze_intent(prompt: str, jailbreak_prob: float) -> dict:
     llm_prompt = f"""You are a security intent classifier. Analyze this prompt:
 
 User Prompt: {prompt}
-Detector Score: {jailbreak_prob:.2f} (0=benign, 1=attack)
+Detector Score: {semantic_score:.2f} (0=benign, 1=attack)
 
 Classify the user's intent as ONE of:
 1. BENIGN_INSTRUCTION: Legitimate task request, no security concern
@@ -480,12 +480,12 @@ Respond in JSON format:
 
 ```python
 # After semantic detection
-if 0.40 <= jailbreak_prob <= 0.65:
-    intent_result = analyze_intent(prompt, jailbreak_prob)
+if 0.40 <= semantic_score <= 0.65:
+    intent_result = analyze_intent(prompt, semantic_score)
     
     if intent_result["classification"] == "BENIGN_INSTRUCTION" and intent_result["confidence"] > 0.85:
         # Downgrade jailbreak probability
-        jailbreak_prob *= 0.5
+        semantic_score *= 0.5
         logging.info(f"Intent layer downgrade: {intent_result['reasoning']}")
 ```
 
@@ -516,7 +516,7 @@ Measure operational costs:
 
 ```python
 # Count intent layer invocations
-intent_calls = [r for r in results if 0.40 <= r["jailbreak_prob"] <= 0.65]
+intent_calls = [r for r in results if 0.40 <= r["semantic_score"] <= 0.65]
 
 cost_per_call = 0.01  # Estimate for GPT-4o-mini
 total_cost = len(intent_calls) * cost_per_call
@@ -592,17 +592,17 @@ Collect 10-15 examples of intent layer decisions:
 
 ## Success Metrics
 
-### Phase 2.5.1 (Code Hardening)
+### Phase 4 (Code Hardening)
 - ✅ No regressions in evaluation metrics
 - ✅ Robust label handling prevents silent failures
 - ✅ Logging enables debugging
 
-### Phase 2.5.2 (Clean Corpus & FPR)
+### Phase 3 (Clean Corpus & FPR)
 - ✅ True FPR measured (not estimated)
 - ✅ Blocked prompts categorized (TP/FP/AMB)
 - ✅ Clear recommendation on intent layer
 
-### Phase 2.5.3/2.6 (Intent Layer, if implemented)
+### Phase 6 (Intent Layer, if implemented)
 - ✅ FPR reduced by 2-4 percentage points
 - ✅ Cost < $0.02 per 200 prompts
 - ✅ Explainability logs exist for audit
@@ -611,18 +611,18 @@ Collect 10-15 examples of intent layer decisions:
 
 ## Risk Mitigation
 
-### Phase 2.5.1 Risks
+### Phase 4 Risks
 **Risk:** Code changes break existing functionality  
 **Mitigation:** Run full `Eval.py` after each change, verify metrics unchanged
 
-### Phase 2.5.2 Risks
+### Phase 3 Risks
 **Risk:** Benign corpus not representative of real use cases  
 **Mitigation:** Document clear inclusion criteria, review each prompt manually
 
 **Risk:** Manual review introduces bias  
 **Mitigation:** Use consistent classification criteria, document reasoning
 
-### Phase 2.5.3/2.6 Risks
+### Phase 6 Risks
 **Risk:** LLM introduces latency or cost issues  
 **Mitigation:** Only trigger on ambiguous band (6-8% of prompts), measure cost before deploying
 
@@ -633,7 +633,7 @@ Collect 10-15 examples of intent layer decisions:
 
 ## Decision Points
 
-### Decision Point 1: After Phase 2.5.1
+### Decision Point 1: After Phase 4
 
 **Question:** Are code improvements working correctly?
 
@@ -643,12 +643,12 @@ Collect 10-15 examples of intent layer decisions:
 - Review logs for clarity
 
 **Outcomes:**
-- ✅ **Proceed to Phase 2.5.2** (metrics unchanged, logs clear)
+- ✅ **Proceed to Phase 3** (metrics unchanged, logs clear)
 - ⚠️ **Debug issues** (metrics changed unexpectedly, fix before proceeding)
 
 ---
 
-### Decision Point 2: After Phase 2.5.2
+### Decision Point 2: After Phase 3
 
 **Question:** Is intent layer justified?
 
@@ -657,13 +657,13 @@ Collect 10-15 examples of intent layer decisions:
 - Cost/benefit analysis
 
 **Outcomes:**
-- ✅ **FPR < 3%:** Skip intent layer, proceed to Phase 3 (adversarial testing)
-- ✅ **FPR 3-8%:** Implement intent layer (Phase 2.6)
+- ✅ **FPR < 3%:** Skip intent layer, proceed to Phase 5 (adversarial testing)
+- ✅ **FPR 3-8%:** Implement intent layer (Phase 4)
 - ⚠️ **FPR > 8%:** Re-evaluate model or preprocessing before adding intent layer
 
 ---
 
-### Decision Point 3: After Phase 2.6 (if implemented)
+### Decision Point 3: After Phase 4 (if implemented)
 
 **Question:** Did intent layer improve FPR meaningfully?
 
@@ -675,7 +675,7 @@ Collect 10-15 examples of intent layer decisions:
 **Outcomes:**
 - ✅ **FPR improved 2+ pp, cost acceptable:** Deploy intent layer
 - ⚠️ **FPR improved < 2pp or cost too high:** Roll back, try different approach
-- ✅ **FPR now < 3%:** Proceed to Phase 3 (adversarial testing)
+- ✅ **FPR now < 3%:** Proceed to Phase 5 (adversarial testing)
 
 ---
 
@@ -714,7 +714,7 @@ c:\Projects\Guardrails\
 
 ## Appendix: Quick Reference Commands
 
-### Phase 2.5.1 Commands
+### Phase 4 Commands
 ```powershell
 # Test after code changes
 python Eval.py
@@ -723,7 +723,7 @@ python Eval.py
 $env:PYTHONUNBUFFERED=1; python -c "import logging; logging.basicConfig(level=logging.DEBUG); from OWASP_Pipeline_Guardrail import process_input; print(process_input('test prompt'))"
 ```
 
-### Phase 2.5.2 Commands
+### Phase 3 Commands
 ```powershell
 # Run clean corpus evaluation
 python scripts/Eval_Clean_Benign_Corpus.py
@@ -732,7 +732,7 @@ python scripts/Eval_Clean_Benign_Corpus.py
 python scripts/Calculate_True_FPR.py
 ```
 
-### Phase 2.6 Commands (if applicable)
+### Phase 4 Commands (if applicable)
 ```powershell
 # Run evaluation with intent layer
 python scripts/Eval_Clean_Benign_Corpus.py
@@ -745,7 +745,7 @@ python scripts/Calculate_True_FPR.py
 
 ## Notes
 
-- All phases are **sequential** (don't start Phase 2.5.2 until 2.5.1 is complete)
+- All phases are **sequential** (don't start Phase 3 until 2.5.1 is complete)
 - Decision points are **data-driven** (base decisions on measured metrics, not intuition)
 - Documentation is **continuous** (document as you go, not after the fact)
 - This is a **learning project** (take time to understand why things work, not just make them work)
@@ -754,5 +754,5 @@ python scripts/Calculate_True_FPR.py
 
 **Document Version:** 1.0  
 **Status:** Ready for execution  
-**Next Action:** Begin Phase 2.5.1 Task 1.1 (implement robust label normalization)  
+**Next Action:** Begin Phase 4 Task 1.1 (implement robust label normalization)  
 **Last Updated:** December 13, 2025

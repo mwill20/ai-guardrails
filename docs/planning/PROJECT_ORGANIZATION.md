@@ -65,7 +65,7 @@ Guardrails/
 - ✅ Clean_Benign_Corpus_Evaluation_Report.md
 
 **Old Evaluations → `archive/old_evals/`**
-- ✅ phase_2_51_eval_results_*.json (all timestamped versions)
+- ✅ phase_4_eval_results_*.json (all timestamped versions)
 - ✅ clean_corpus_eval_*_20251213_073338.json (first buggy run)
 - ✅ clean_corpus_eval_*_20251213_073707.json (second buggy run)
 
@@ -135,7 +135,7 @@ from src.OWASP_Pipeline_Guardrail import run_guardrail_pipeline
 result = run_guardrail_pipeline("Your prompt here")
 # Returns: {
 #   "combined_risk": "low_risk|medium_risk|high_risk|critical",
-#   "semantic_result": {"label": "benign|malicious", "jailbreak_prob": float},
+#   "semantic_result": {"label": "benign|malicious", "score": float},  # score = normalized jailbreak probability
 #   "agent_visible": str,
 #   "log_entry": {...}
 # }
@@ -206,5 +206,5 @@ result = run_guardrail_pipeline("Your prompt here")
 ---
 
 **Reorganization Status:** Complete ✅  
-**Project Status:** Production-ready, Phase 2.5 complete  
-**Next Phase:** Phase 3 - Adversarial Testing
+**Project Status:** Production-ready, Phase 3 complete  
+**Next Phase:** Phase 5 - Adversarial Testing

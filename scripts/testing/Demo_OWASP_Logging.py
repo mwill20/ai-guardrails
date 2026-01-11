@@ -41,12 +41,12 @@ for test in test_cases:
     print("\n" + "=" * 100)
     print(f"TEST: {test['name']}")
     print("=" * 100)
-    print(f"\n📝 Input:\n   {test['input']}")
+    print(f"\nInput:\n   {test['input']}")
     print()
     
     result = run_guardrail_pipeline(test['input'])
     
-    print("🔍 DETERMINISTIC LAYER:")
+    print("DETERMINISTIC LAYER:")
     print(f"   Risk Level: {result['deterministic_risk']}")
     
     if result['deterministic_pattern_hits']:
@@ -60,24 +60,24 @@ for test in test_cases:
         print("   Patterns Detected: None")
     
     print()
-    print("🤖 SEMANTIC LAYER:")
+    print("SEMANTIC LAYER:")
     print(f"   Label: {result['semantic_result']['label']}")
     print(f"   Score: {result['semantic_result']['score']:.4f}")
     
     print()
-    print("⚖️  COMBINED DECISION:")
+    print("COMBINED DECISION:")
     print(f"   Final Risk: {result['combined_risk']}")
     print(f"   Action: {result['log_entry']['action']}")
     
     print()
-    print("📊 COMPLETE LOG ENTRY:")
+    print("COMPLETE LOG ENTRY:")
     print("-" * 100)
     pprint(result['log_entry'], width=100, sort_dicts=False)
     print("-" * 100)
     
     print()
-    print(f"🎯 Agent Receives:\n   {result['agent_visible'][:100]}...")
+    print(f"Agent Receives:\n   {result['agent_visible'][:100]}...")
 
 print("\n" + "=" * 100)
-print("✅ DEMONSTRATION COMPLETE")
+print("[OK] DEMONSTRATION COMPLETE")
 print("=" * 100)

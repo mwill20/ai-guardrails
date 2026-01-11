@@ -1,4 +1,4 @@
-# Phase 2.6 Execution Checklist
+# Phase 4 Execution Checklist
 **Deterministic Sanitization Enrichment**
 
 **Goal:** Improve xTRam1 TPR from 25.4% → ≥40% (+15pp), Mean TPR from 66.6% → ≥71% (+5pp), maintain FPR ≤2.0%
@@ -64,7 +64,7 @@
 
 **Goal:** Ensure everyone codes to the same spec
 
-- [ ] Confirm Schema v1 documented in `PROJECT_ROADMAP.md` (Phase 2.6 section)
+- [ ] Confirm Schema v1 documented in `PROJECT_ROADMAP.md` (Phase 4 section)
 - [ ] Define required enums in code constants:
   - [ ] `CATEGORIES = {"system_marker", "control_phrase", "credential_like", "boundary_testing", "role_confusion", "encoding_obfuscation", "other"}`
   - [ ] `PATTERN_KINDS = {"literal", "regex", "keyword_set"}`
@@ -98,10 +98,10 @@
 
 ### Core Logic
 - [ ] Parse eval logs (JSONL format):
-  - [ ] Extract: `prompt_id`, `ground_truth`, `guardrail_action`, `semantic_label`, `jailbreak_prob`
+  - [ ] Extract: `prompt_id`, `ground_truth`, `guardrail_action`, `semantic_label`, `semantic_score`
   - [ ] **STOP-THE-LINE ASSERTION:** Fail run if ANY eval log contains:
     - [ ] `"action": "UNKNOWN"` OR `"action": null`
-    - [ ] `"jailbreak_prob": null` for prompts that should have semantic evaluation
+    - [ ] `"semantic_score": null` or missing for prompts that should have semantic evaluation
     - [ ] Rationale: "Prevents silent allow regressions—no UNKNOWN actions allowed"
   - [ ] Label outcomes per prompt: TP / FN / FP / TN
   - [ ] Validate: `TP + FN + FP + TN = total_prompts` per dataset
@@ -445,7 +445,7 @@
 ### Evaluation Report
 - [ ] Create `docs/reports/Phase_2_6_Evaluation_Report.md`
 - [ ] **Section 1: Executive Summary**
-  - [ ] Phase 2.6 goal (deterministic enrichment for xTRam1 coverage)
+  - [ ] Phase 4 goal (deterministic enrichment for xTRam1 coverage)
   - [ ] Gate A result: FPR ___ % (≤2.0% required) — ⬜ PASS | ⬜ FAIL
   - [ ] Gate B result: xTRam1 lift ___ pp (≥+15pp required) — ⬜ PASS | ⬜ FAIL
   - [ ] Gate B result: Mean TPR lift ___ pp (≥+5pp required) — ⬜ PASS | ⬜ FAIL
@@ -470,7 +470,7 @@
   - [ ] Attacks caught by **deterministic alone** (before semantic): ___ %
   - [ ] Attacks caught by **semantic alone** (deterministic missed): ___ %
   - [ ] Attacks caught by **both layers** (redundancy): ___ %
-  - [ ] Attacks **missed by both** (remaining gaps for Phase 3): ___ %
+  - [ ] Attacks **missed by both** (remaining gaps for Phase 5): ___ %
 - [ ] **Section 6: Latency Impact**
   - [ ] Deterministic layer: p50 ___ ms, p95 ___ ms
   - [ ] Total pipeline: p50 ___ ms, p95 ___ ms
@@ -480,12 +480,12 @@
   - [ ] What didn't work (e.g., weak signals needed tuning)
   - [ ] Unexpected findings (e.g., patterns useful across datasets)
 - [ ] **Section 8: Residual Risk & Next Steps**
-  - [ ] Remaining coverage gaps (document for Phase 3 adversarial testing)
+  - [ ] Remaining coverage gaps (document for Phase 5 adversarial testing)
   - [ ] Attack types still bypassing both layers
-  - [ ] Prepare for Phase 3: obfuscation, encoding, multi-turn attacks
+  - [ ] Prepare for Phase 5: obfuscation, encoding, multi-turn attacks
 
 ### WORK_LOG Update
-- [ ] Add Phase 2.6 entry to `WORK_LOG.md`:
+- [ ] Add Phase 4 entry to `WORK_LOG.md`:
   - [ ] Start/end dates, total duration
   - [ ] Key decisions: pattern selection thresholds, signal combination tuning
   - [ ] Challenges: FPR regression during testing, pattern ambiguity
@@ -493,12 +493,12 @@
   - [ ] Final metrics snapshot
 
 ### PROJECT_ROADMAP.md Update
-- [ ] Mark Phase 2.6 status: ✅ Complete
+- [ ] Mark Phase 4 status: ✅ Complete
 - [ ] Update Current Status Overview table:
-  - [ ] Phase 2.6 FPR: ___ %
-  - [ ] Phase 2.6 TPR: ___ % (xTRam1), ___ % (mean)
+  - [ ] Phase 4 FPR: ___ %
+  - [ ] Phase 4 TPR: ___ % (xTRam1), ___ % (mean)
 - [ ] Update Success Metrics table (Technical Metrics section)
-- [ ] Add Phase 2.6 to Key Decisions Log:
+- [ ] Add Phase 4 to Key Decisions Log:
   - [ ] Date: 2025-12-14
   - [ ] Decision: Pattern discovery pipeline with schema v1
   - [ ] Outcome: Deterministic layer enriched, xTRam1 coverage improved
@@ -507,13 +507,13 @@
 ### Version Control
 - [ ] Bump `guardrail.policy_version` in code:
   - [ ] `"phase2.6-pre"` → `"phase2.6-post"` or `"2.1"`
-- [ ] Commit all changes: `git add -A; git commit -m "Phase 2.6: Deterministic enrichment complete"`
+- [ ] Commit all changes: `git add -A; git commit -m "Phase 4: Deterministic enrichment complete"`
 - [ ] Merge branch: `git checkout main; git merge phase-2.6-deterministic-enrichment`
 - [ ] Tag release: `git tag phase-2.6-complete`
 
 ---
 
-## 8️⃣ Phase 2.6 Completion Validation
+## 8️⃣ Phase 4 Completion Validation
 
 ### Success Criteria Checklist (Production Invariants)
 - [ ] All rules are deterministic (no ML, no rewriting)
@@ -534,29 +534,29 @@
 - [ ] `docs/reports/Phase_2_6_Evaluation_Report.md` (narrative: before/after metrics, gate results)
 - [ ] `src/Deterministic_Guardrails_Enhanced.py` (implemented, unit tested)
 - [ ] `src/OWASP_Pipeline_Guardrail.py` (integrated, execution order verified)
-- [ ] `WORK_LOG.md` updated (Phase 2.6 summary, key decisions, challenges)
-- [ ] `PROJECT_ROADMAP.md` updated (Phase 2.6 marked complete, metrics updated)
+- [ ] `WORK_LOG.md` updated (Phase 4 summary, key decisions, challenges)
+- [ ] `PROJECT_ROADMAP.md` updated (Phase 4 marked complete, metrics updated)
 
 ### Quality Gates Final Status
 - [ ] **Gate A (FPR Regression):** FPR ___ % ≤ 2.0% → ⬜ PASS | ⬜ FAIL
 - [ ] **Gate B1 (xTRam1 Lift):** TPR ___ % ≥ 40.0% (lift ___ pp ≥ +15pp) → ⬜ PASS | ⬜ FAIL
 - [ ] **Gate B2 (Mean Lift):** Mean TPR ___ % ≥ 71.0% (lift ___ pp ≥ +5pp) → ⬜ PASS | ⬜ FAIL
-- [ ] **Both gates PASSED** → Phase 2.6 COMPLETE ✅
+- [ ] **Both gates PASSED** → Phase 4 COMPLETE ✅
 
-### Handoff to Phase 3
+### Handoff to Phase 5
 - [ ] Remaining coverage gaps documented (attacks still bypassing both layers)
 - [ ] New baseline metrics recorded:
   - [ ] xTRam1 TPR: ___ % (was 25.4%)
   - [ ] Mean TPR: ___ % (was 66.6%)
   - [ ] Clean FPR: ___ % (was 1.0%)
-- [ ] Pattern library ready for Phase 3 adversarial stress-testing (obfuscation, encoding, multi-turn)
+- [ ] Pattern library ready for Phase 5 adversarial stress-testing (obfuscation, encoding, multi-turn)
 - [ ] Residual risk analysis complete (documented in evaluation report)
 
 ---
 
-## 📌 Phase 2.6 Completion Definition
+## 📌 Phase 4 Completion Definition
 
-**Phase 2.6 is COMPLETE when:**
+**Phase 4 is COMPLETE when:**
 1. ✅ Both quality gates pass (Gate A: FPR ≤2%, Gate B: xTRam1 +15pp & Mean +5pp)
 2. ✅ Deterministic coverage measurably improves (evidence in eval report)
 3. ✅ FPR remains controlled (no regression beyond 2.0%)

@@ -1,5 +1,5 @@
 """
-Phase 2.6 Gate A Validation - Test FPR on Clean_Benign_Corpus_v1
+Phase 4 Gate A Validation - Test FPR on Clean_Benign_Corpus_v1
 
 GATE A: FPR ≤ 2.0% on Clean_Benign_Corpus_v1
 Baseline: 1.0% FPR before OWASP pattern addition

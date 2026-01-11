@@ -3,7 +3,7 @@
 ## Executive Summary
 
 **Date Range:** December 12-13, 2025  
-**Phase:** Phase 2.5 — Semantic Guardrail Model Selection  
+**Phase:** Phase 3 — Semantic Guardrail Model Selection  
 **Outcome:** Successfully identified and resolved critical false positive rate (FPR) issue through systematic evaluation and model replacement  
 
 **Key Metrics:**
@@ -216,11 +216,11 @@ def run_jailbreak_detector(prompt: str) -> float:
     
     # Normalize: if label indicates benign/safe, invert probability
     if any(word in label_lower for word in ["benign", "safe", "legit"]):
-        jailbreak_prob = 1.0 - score
+        semantic_score = 1.0 - score
     else:
-        jailbreak_prob = score
+        semantic_score = score
     
-    return jailbreak_prob
+    return semantic_score
 ```
 
 3. **Docstring Updates:**
@@ -234,7 +234,7 @@ Updated documentation to reflect new model behavior and label schemes.
 
 **Command:** `python Eval.py`  
 **Date:** December 13, 2025 05:22:11  
-**Results File:** `reports\phase_2_51_eval_results_20251213_052211.json`
+**Results File:** `reports\phase_2_51_eval_results_20251213_052211.json` (legacy filename)
 
 #### Attack Detection (True Positive Rate)
 
@@ -367,7 +367,7 @@ The reported 24.2% FPR (121/500 blocked) on TrustAIRLab "regular" dataset includ
 Current implementation uses basic string matching:
 ```python
 if any(word in label_lower for word in ["benign", "safe", "legit"]):
-    jailbreak_prob = 1.0 - score
+    semantic_score = 1.0 - score
 ```
 
 **Recommended improvement:**
@@ -429,7 +429,7 @@ _classifier = pipeline("text-classification", model=_MODEL_NAME, device=device)
 Add structured logging for audit trail:
 ```python
 logging.info(f"Jailbreak detector: model={_MODEL_NAME}, label={label}, "
-             f"score={score:.4f}, normalized={jailbreak_prob:.4f}, "
+             f"score={score:.4f}, normalized={semantic_score:.4f}, "
              f"threshold={threshold}, decision={decision}")
 ```
 
@@ -609,7 +609,7 @@ Current model blocks both (conservative), but first is legitimate security resea
 10. `WORK_LOG_Phase2_Semantic_Model_Selection.md` — This document
 
 ### Evaluation Results
-11. `reports\phase_2_51_eval_results_20251213_052211.json` — Full evaluation metrics
+11. `reports\phase_2_51_eval_results_20251213_052211.json` — Full evaluation metrics (legacy filename)
 
 ---
 
@@ -646,10 +646,10 @@ Current model blocks both (conservative), but first is legitimate security resea
 6. ✅ **True FPR measured** — 1.0% on clean corpus (COMPLETED)
 7. 🎯 **Tune deterministic patterns** — Allow educational security discussions (optional)
 8. 🎯 **Focus on attack detection** — xTRam1 at 25.4% TPR needs improvement
-9. 🎯 **Adversarial testing (Phase 3)** — Find ProtectAI blind spots, document coverage
+9. 🎯 **Adversarial testing (Phase 5)** — Find ProtectAI blind spots, document coverage
 
 ### Medium-Term (Future Enhancement - Not Needed for FPR)
-10. ❌ **Semantic intent layer (Phase 2.6)** — NOT JUSTIFIED (1.0% FPR acceptable)
+10. ❌ **Semantic intent layer (Phase 4)** — NOT JUSTIFIED (1.0% FPR acceptable)
 11. 🔮 **Preprocessing layer** — Decode/normalize obfuscated content before detection
 12. 🔮 **Ensemble detection** — Combine multiple models for better coverage on novel attacks
 
@@ -691,11 +691,11 @@ This work demonstrates the value of **systematic measurement over intuition**. B
 
 **Key Learning:** TrustAIRLab "regular" dataset noise (24.2% blocked) was NOT representative of true FPR. Building clean benign corpus provided accurate ground truth measurement. **Always validate metrics on known-clean data.**
 
-**Next Phase:** Focus on improving attack detection (xTRam1 at 25.4% TPR) and adversarial testing (Phase 3) rather than further FPR reduction. The model swap solved the false positive crisis completely for practical purposes.
+**Next Phase:** Focus on improving attack detection (xTRam1 at 25.4% TPR) and adversarial testing (Phase 5) rather than further FPR reduction. The model swap solved the false positive crisis completely for practical purposes.
 
 ---
 
 **Document Version:** 2.0  
 **Author:** AI Guardrail Project  
 **Last Updated:** December 13, 2025 (Clean corpus evaluation completed)  
-**Status:** Phase 2.5 Complete — Ready for Phase 3 (Adversarial Testing)
+**Status:** Phase 3 Complete — Ready for Phase 5 (Adversarial Testing)

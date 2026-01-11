@@ -66,7 +66,8 @@ def evaluate_corpus(corpus: list) -> dict:
             combined_risk = result.get("combined_risk", "unknown")
             semantic_result = result.get("semantic_result", {})
             semantic_risk = semantic_result.get("label", "unknown")
-            jailbreak_prob = semantic_result.get("jailbreak_prob", None)
+            semantic_score = semantic_result.get("score", None)
+            jailbreak_prob = semantic_score
             agent_visible = result.get("agent_visible", "")
             log_entry = result.get("log_entry", {})
             action_taken = log_entry.get("action", "unknown")
@@ -84,6 +85,7 @@ def evaluate_corpus(corpus: list) -> dict:
                 "action": action_taken,
                 "combined_risk": combined_risk,
                 "semantic_risk": semantic_risk,
+                "semantic_score": semantic_score,
                 "jailbreak_prob": jailbreak_prob,
                 "agent_visible": agent_visible[:100] + "..." if len(agent_visible) > 100 else agent_visible
             }
@@ -93,7 +95,7 @@ def evaluate_corpus(corpus: list) -> dict:
             # Track blocks vs allows
             if is_blocked:
                 blocked_prompts.append(result_entry)
-                print(f"  ❌ BLOCKED #{prompt_id} ({category}): {prompt_text[:60]}...")
+                print(f"  [ERROR] BLOCKED #{prompt_id} ({category}): {prompt_text[:60]}...")
             else:
                 allowed_prompts.append(result_entry)
         
@@ -105,7 +107,7 @@ def evaluate_corpus(corpus: list) -> dict:
                 "error": str(e)
             }
             errors.append(error_entry)
-            print(f"  ⚠️  ERROR #{prompt_id}: {str(e)}")
+            print(f"  [WARN] ERROR #{prompt_id}: {str(e)}")
     
     print("=" * 80)
     print(f"Evaluation complete: {len(corpus)} prompts processed\n")
@@ -167,7 +169,7 @@ def print_summary(evaluation: dict):
     print(f"Measured FPR: {summary['fpr_percentage']}%")
     print("=" * 80)
     print()
-    print("📋 Next Steps:")
+    print("Next Steps:")
     print("  1. Review blocked prompts in: reports/Clean_Benign_Blocked_For_Review.jsonl")
     print("  2. Classify each block as: TP (corpus error) or FP (guardrail error)")
     print("  3. Calculate true FPR: (False Positives / 200)")
@@ -176,13 +178,13 @@ def print_summary(evaluation: dict):
     # Decision guidance
     fpr = summary['fpr_percentage']
     if fpr < 3:
-        print("💡 Recommendation: FPR < 3% - Model swap alone may be sufficient")
+        print("[OK] Recommendation: FPR < 3% - Model swap alone may be sufficient")
         print("   Consider skipping semantic intent layer for now")
     elif fpr <= 8:
-        print("💡 Recommendation: FPR 3-8% - Semantic intent layer justified")
+        print("[OK] Recommendation: FPR 3-8% - Semantic intent layer justified")
         print("   Small volume, cheap to run, meaningful improvement expected")
     else:
-        print("⚠️  Recommendation: FPR > 8% - Investigate further before adding layers")
+        print("[WARN] Recommendation: FPR > 8% - Investigate further before adding layers")
         print("   Consider: preprocessing, different model, or ensemble approach")
     print()
 
@@ -200,20 +202,20 @@ def save_results(evaluation: dict, output_dir: str = None):
     full_report_path = f"{output_dir}/clean_corpus_eval_full_{timestamp}.json"
     with open(full_report_path, 'w', encoding='utf-8') as f:
         json.dump(evaluation, f, indent=2)
-    print(f"✅ Full report saved: {full_report_path}")
+    print(f"[OK] Full report saved: {full_report_path}")
     
     # Blocked prompts for manual review (JSONL format)
     blocked_path = f"{output_dir}/Clean_Benign_Blocked_For_Review.jsonl"
     with open(blocked_path, 'w', encoding='utf-8') as f:
         for item in evaluation['blocked_prompts']:
             f.write(json.dumps(item) + "\n")
-    print(f"✅ Blocked prompts saved: {blocked_path}")
+    print(f"[OK] Blocked prompts saved: {blocked_path}")
     
     # Summary only
     summary_path = f"{output_dir}/clean_corpus_eval_summary_{timestamp}.json"
     with open(summary_path, 'w', encoding='utf-8') as f:
         json.dump(evaluation['summary'], f, indent=2)
-    print(f"✅ Summary saved: {summary_path}")
+    print(f"[OK] Summary saved: {summary_path}")
 
 
 def main():
@@ -224,23 +226,23 @@ def main():
     
     # Check if corpus exists
     if not corpus_path.exists():
-        print(f"❌ Error: Corpus file not found: {corpus_path}")
+        print(f"[ERROR] Error: Corpus file not found: {corpus_path}")
         print("   Expected location: datasets/Clean_Benign_Corpus_v1.jsonl")
         sys.exit(1)
     
     # Load corpus
     try:
         corpus = load_corpus(str(corpus_path))
-        print(f"✅ Loaded {len(corpus)} prompts from {corpus_path}\n")
+        print(f"[OK] Loaded {len(corpus)} prompts from {corpus_path}\n")
     except Exception as e:
-        print(f"❌ Error loading corpus: {e}")
+        print(f"[ERROR] Error loading corpus: {e}")
         sys.exit(1)
     
     # Run evaluation
     try:
         evaluation = evaluate_corpus(corpus)
     except Exception as e:
-        print(f"❌ Error during evaluation: {e}")
+        print(f"[ERROR] Error during evaluation: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
@@ -251,7 +253,7 @@ def main():
     # Save results
     save_results(evaluation)
     
-    print("\n✅ Evaluation complete!")
+    print("\n[OK] Evaluation complete!")
 
 
 if __name__ == "__main__":

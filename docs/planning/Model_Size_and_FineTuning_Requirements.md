@@ -39,14 +39,14 @@ Total: **1.2–1.5 GiB** (very manageable).
 ## 2. Do We Need to Post-Train This Model?
 
 **Short answer:**  
-No — not for Phase 2.5.
+No — not for Phase 3.
 
 The model is:
 - Already fine-tuned specifically for **jailbreak detection**
 - Reported to achieve **~98% accuracy** on its domain
 - Suitable for immediate use in the semantic guardrail pipeline
 
-Phase 2.5 only requires:
+Phase 3 only requires:
 - Integrating a real model  
 - Mapping model output to semantic risk levels  
 - Logging + evaluation  
@@ -150,10 +150,10 @@ Curation requirement: **high** (the expensive part).
 
 ## 6. Recommendation for This Project Phase
 
-For **Phase 2.5**, use the model **as-is**:
+For **Phase 3**, use the model **as-is**:
 
 - No fine-tuning required  
 - Focus on integration, evaluation, logging, and risk mapping  
-- Fine-tuning can occur in Phase 3 or 4 if evaluation reveals gaps  
+- Fine-tuning can occur in Phase 5 or 4 if evaluation reveals gaps  
 
 This aligns with your NorthStar and keeps development efficient and realistic.

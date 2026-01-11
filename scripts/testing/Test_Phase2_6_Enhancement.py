@@ -1,5 +1,5 @@
 """
-Test Phase 2.6 deterministic enhancements with OWASP pattern integration.
+Test Phase 4 deterministic enhancements with OWASP pattern integration.
 """
 
 import sys
@@ -82,7 +82,7 @@ for i, test in enumerate(test_cases, 1):
 print("\n" + "=" * 80)
 print("TEST COMPLETE")
 print("=" * 80)
-print("\n✅ Phase 2.6 enhancement successfully integrated!")
+print("\n[OK] Phase 4 enhancement successfully integrated!")
 print("   - OWASP patterns now active in deterministic layer")
 print("   - Detailed pattern hit logging available")
 print("   - Legacy Phase 1 patterns preserved for backward compatibility")

@@ -1,8 +1,8 @@
 """
-Phase 2.51 — Evaluation Harness (Metrics, Not Vibes)
+Phase 4 - Evaluation Harness (Metrics, Not Vibes)
 
 Runs multiple public prompt-injection / jailbreak datasets through your existing
-guardrail pipeline (Phase 2.5) and reports detection + false positives.
+guardrail pipeline (current) and reports detection + false positives.
 
 You must fill in:
   1) PIPELINE IMPORT (where your run_guardrail_pipeline lives)
@@ -55,7 +55,7 @@ SOFT_RISKS = {"medium_risk"}  # optional: track separately
 @dataclass
 class DatasetSpec:
     name: str
-    kind: str  # "hf" or "csv"
+    kind: str  # "hf", "csv", or "jsonl"
     source: str  # hf dataset name OR local csv path
     split: Optional[str] = None
     config: Optional[str] = None
@@ -69,6 +69,9 @@ class DatasetSpec:
 
     # If dataset is attack-only (common), set this True.
     attack_only: bool = False
+
+    # If set, override label logic entirely (True=attack, False=benign).
+    fixed_label: Optional[bool] = None
 
     # Optional: if dataset includes both "original" + "modified", choose which to score
     prefer_field_order: Optional[List[str]] = None
@@ -165,6 +168,17 @@ def load_rows_from_csv(path: str) -> List[Dict[str, Any]]:
         return list(reader)
 
 
+def load_rows_from_jsonl(path: str) -> List[Dict[str, Any]]:
+    rows: List[Dict[str, Any]] = []
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            rows.append(json.loads(line))
+    return rows
+
+
 def pick_text_field(row: Dict[str, Any], spec: DatasetSpec) -> str:
     # Prefer explicit spec
     if spec.text_field and spec.text_field in row and row[spec.text_field]:
@@ -198,6 +212,9 @@ def is_attack_row(row: Dict[str, Any], spec: DatasetSpec) -> Optional[bool]:
     # Override: TrustAIRLab regular config contains benign prompts for FPR measurement
     if spec.name.startswith("TrustAIRLab_regular"):
         return False
+
+    if spec.fixed_label is not None:
+        return spec.fixed_label
     
     if spec.attack_only:
         return True
@@ -222,6 +239,10 @@ def is_attack_row(row: Dict[str, Any], spec: DatasetSpec) -> Optional[bool]:
 def load_dataset_rows(spec: DatasetSpec, limit: Optional[int] = None) -> List[Dict[str, Any]]:
     if spec.kind == "csv":
         rows = load_rows_from_csv(spec.source)
+        return rows[:limit] if limit else rows
+
+    if spec.kind == "jsonl":
+        rows = load_rows_from_jsonl(spec.source)
         return rows[:limit] if limit else rows
 
     if spec.kind == "hf":
@@ -311,7 +332,8 @@ def score_dataset(spec: DatasetSpec, rows: List[Dict[str, Any]]) -> Tuple[Metric
             "combined_risk": combined_risk,
             "action": "blocked" if pred_attack else ("sanitize" if pred_soft else "allow"),
             "semantic_label": semantic_result.get("label"),
-            "jailbreak_prob": semantic_result.get("score") if semantic_result.get("label") == "INJECTION" else (1.0 - semantic_result.get("score", 0.0)),
+            "semantic_score": semantic_result.get("score"),
+            "jailbreak_prob": semantic_result.get("score"),
             "deterministic_risk": result.get("deterministic_risk"),
             "owasp_codes": result.get("log_entry", {}).get("owasp_codes", []),
         })
@@ -350,23 +372,22 @@ def main() -> None:
             split="train",
             attack_only=True,
         ),
-        # BENIGN DATASET: TrustAIRLab regular config contains normal/safe prompts.
-        # This is CRITICAL for calculating FPR (False Positive Rate) - without benign data,
-        # we cannot measure how often the guardrail incorrectly blocks safe prompts.
         DatasetSpec(
-            name="TrustAIRLab_regular_2023_12_25",
-            kind="hf",
-            source="TrustAIRLab/in-the-wild-jailbreak-prompts",
-            config="regular_2023_12_25",
-            split="train",
-            attack_only=False,  # Benign prompts for FPR calculation
+            name="Clean_Benign_Corpus_v1",
+            kind="jsonl",
+            source="datasets/Clean_Benign_Corpus_v1.jsonl",
+            text_field="prompt",
+            fixed_label=False,
         ),
         DatasetSpec(
             name="xTRam1_safe_guard_prompt_injection",
             kind="hf",
             source="xTRam1/safe-guard-prompt-injection",
             split="train",
-            attack_only=True,
+            text_field="text",
+            label_field="label",
+            attack_label_values=[1],
+            attack_only=False,
         ),
         # Commented out - CSV file not available locally
         # DatasetSpec(
@@ -394,6 +415,9 @@ def main() -> None:
             "fpr_requires_benign": (
                 "Many jailbreak datasets are attack-only. FPR is only meaningful when a dataset includes benign rows."
             ),
+            "trustairlab_regular": (
+                "TrustAIRLab regular is excluded from FPR due to contamination; Clean_Benign_Corpus_v1 is used instead."
+            ),
         },
         "design_review_summary": {},
     }
@@ -402,7 +426,7 @@ def main() -> None:
     os.makedirs("reports/evals", exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     
-    print("\nPhase 2.51 — Evaluation Harness (Metrics, Not Vibes)")
+    print("\nPhase 4 - Evaluation Harness (Metrics, Not Vibes)")
     print(f"Sample limit per dataset: {limit if limit else 'NONE (full run)'}\n")
     for spec in DATASETS:
         rows = load_dataset_rows(spec, limit=limit)
@@ -481,7 +505,7 @@ def main() -> None:
     
     # Generate timestamped filename to preserve eval history
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_path = os.path.join("reports", f"phase_2_51_eval_results_{timestamp}.json")
+    out_path = os.path.join("reports", f"phase_4_eval_results_{timestamp}.json")
     
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)

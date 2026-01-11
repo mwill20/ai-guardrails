@@ -61,13 +61,13 @@ for i, test in enumerate(test_attacks, 1):
     print(f"Action: {action}")
     
     if expected_found and action == "blocked":
-        print(f"✅ CAUGHT by deterministic layer")
+        print("[OK] CAUGHT by deterministic layer")
         caught += 1
     elif action == "blocked":
-        print(f"✓ CAUGHT (but by semantic layer, not deterministic)")
+        print("[OK] CAUGHT by semantic layer (no deterministic hit)")
         caught += 1
     else:
-        print(f"❌ MISSED - Attack not blocked!")
+        print("[ERROR] MISSED - attack not blocked!")
         missed.append(test["attack"])
 
 print()
@@ -79,14 +79,14 @@ print(f"Caught: {caught}/{len(test_attacks)} ({caught/len(test_attacks)*100:.0f}
 print(f"Missed: {len(missed)}")
 
 if len(missed) > 0:
-    print("\n⚠️  MISSED ATTACKS:")
+    print("\n[WARN] MISSED ATTACKS:")
     for attack in missed:
         print(f"  - {attack[:80]}...")
     print()
-    print("❌ CRITICAL ISSUE: Patterns not working as expected!")
+    print("[ERROR] CRITICAL ISSUE: Patterns not working as expected!")
 else:
     print()
-    print("✅ ALL ATTACKS CAUGHT")
+    print("[OK] ALL ATTACKS CAUGHT")
     print("   - OWASP patterns ARE working in realistic contexts")
     print("   - Would have detected attacks if they were in clean corpus")
 
@@ -97,12 +97,12 @@ print("=" * 100)
 print("""
 The "suspiciously good" results are LEGITIMATE because:
 
-1. ✅ OWASP patterns are loaded and active (17 patterns)
-2. ✅ Patterns detected in known attacks (5/5 = 100%)
-3. ✅ Pipeline integration confirmed (pattern_hits exposed)
-4. ✅ Gate A validation accurate (0 deterministic FPs, 2 semantic FPs)
-5. ✅ Injected attacks caught in clean corpus context
-6. ✅ Backward compatibility maintained (legacy patterns work)
+1. [OK] OWASP patterns are loaded and active (17 patterns)
+2. [OK] Patterns detected in known attacks (5/5 = 100%)
+3. [OK] Pipeline integration confirmed (pattern_hits exposed)
+4. [OK] Gate A validation accurate (0 deterministic FPs, 2 semantic FPs)
+5. [OK] Injected attacks caught in clean corpus context
+6. [OK] Backward compatibility maintained (legacy patterns work)
 
 The FPR = 1.0% is accurate because:
 - OWASP patterns use explicit attack language ("ignore instructions", "act as admin")

@@ -1,5 +1,5 @@
 # Pattern Discovery Report
-**Phase 2.6: Deterministic Sanitization Enrichment**
+**Phase 4: Deterministic Sanitization Enrichment**
 
 **Date:** December 13, 2025  
 **Author:** Project Lead  
@@ -11,7 +11,7 @@
 ## 🎯 Discovery Methodology
 
 **Data Sources:**
-1. ProtectAI v2 high-confidence malicious predictions (jailbreak_prob > 0.9)
+1. ProtectAI v2 high-confidence malicious predictions (semantic_score > 0.9)
 2. TrustAIRLab_xTRam1 failures (attacks that bypass current detection)
 3. TrustAIRLab_jailbreak patterns (known attack language)
 4. TrustAIRLab_DarkWeb patterns (adversarial queries)
@@ -164,7 +164,7 @@
 - **Bypassed attacks:** 53 prompts (74.6%)
 - **Mean TPR:** 66.6%
 
-### Target (Post-Phase 2.6):
+### Target (Post-Phase 4):
 - **TrustAIRLab_xTRam1 TPR:** ≥40% (+15pp minimum)
 - **Mean TPR:** ≥71% (+5pp minimum)
 - **FPR (Clean Corpus):** ≤2.0% (currently 1.0%)
@@ -210,7 +210,7 @@
 ## 🔄 Next Steps
 
 1. **Run Eval.py** on all TrustAIRLab datasets, save detailed logs with prompts + predictions
-2. **Extract patterns** from high-confidence malicious predictions (jailbreak_prob > 0.9)
+2. **Extract patterns** from high-confidence malicious predictions (semantic_score > 0.9)
 3. **Frequency analysis** across attack datasets (sort by occurrence count)
 4. **FP validation** against Clean_Benign_Corpus_v1 (grep + manual review)
 5. **Populate this template** with actual data, frequencies, and decisions
@@ -240,4 +240,4 @@
 
 **Template Version:** 1.0  
 **Last Updated:** December 13, 2025  
-**Status:** Ready for analysis (Step 1 of Phase 2.6)
+**Status:** Ready for analysis (Step 1 of Phase 4)

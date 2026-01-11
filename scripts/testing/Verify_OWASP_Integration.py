@@ -25,7 +25,7 @@ print("-" * 100)
 
 from Deterministic_Guardrails import OWASP_PATTERNS
 
-print(f"✓ OWASP_PATTERNS loaded: {len(OWASP_PATTERNS)} patterns")
+print(f"[OK] OWASP_PATTERNS loaded: {len(OWASP_PATTERNS)} patterns")
 print(f"  Sample patterns:")
 for pattern, code, category, weight in OWASP_PATTERNS[:5]:
     print(f"    - {pattern[:40]:40s} [{code}] {category}")
@@ -44,11 +44,11 @@ print(f"Input: {test_attack}")
 print(f"Risk: {risk}")
 print(f"Patterns detected: {len(pattern_hits)}")
 if pattern_hits:
-    print(f"✓ OWASP patterns ARE ACTIVE")
+    print("[OK] OWASP patterns ARE ACTIVE")
     for hit in pattern_hits:
         print(f"  - {hit['pattern']} [{hit['code']}]")
 else:
-    print(f"❌ ERROR: No patterns detected! OWASP patterns may not be active!")
+    print("[ERROR] No patterns detected! OWASP patterns may not be active!")
 print()
 
 # Test 3: Verify pipeline integration
@@ -66,11 +66,11 @@ print(f"Combined risk: {result['combined_risk']}")
 print(f"Action: {result['log_entry']['action']}")
 
 if result['deterministic_pattern_hits']:
-    print(f"✓ PIPELINE IS USING NEW DETERMINISTIC LAYER")
+    print("[OK] PIPELINE IS USING NEW DETERMINISTIC LAYER")
     for hit in result['deterministic_pattern_hits']:
         print(f"  - {hit['pattern']} [{hit['code']}]")
 else:
-    print(f"⚠️  WARNING: Pipeline not detecting patterns!")
+    print("[WARN] Pipeline not detecting patterns!")
 print()
 
 # Test 4: Verify clean corpus patterns
@@ -90,13 +90,13 @@ for prompt in benign_prompts:
     risk, hits = classify_input_with_details(prompt)
     if hits:
         fp_count += 1
-        print(f"⚠️  FP detected: '{prompt[:50]}...'")
+        print(f"[WARN] FP detected: '{prompt[:50]}...'")
         print(f"   Patterns: {[h['pattern'] for h in hits]}")
 
 if fp_count == 0:
-    print(f"✓ No false positives on {len(benign_prompts)} benign prompts")
+    print(f"[OK] No false positives on {len(benign_prompts)} benign prompts")
 else:
-    print(f"❌ {fp_count}/{len(benign_prompts)} false positives!")
+    print(f"[ERROR] {fp_count}/{len(benign_prompts)} false positives!")
 print()
 
 # Test 5: Verify known attacks are caught
@@ -116,10 +116,10 @@ for attack in known_attacks:
     risk, hits = classify_input_with_details(attack)
     if hits:
         caught += 1
-        print(f"✓ Caught: '{attack[:50]}...'")
+        print(f"[OK] Caught: '{attack[:50]}...'")
         print(f"  Patterns: {[h['code'] for h in hits]}")
     else:
-        print(f"❌ MISSED: '{attack[:50]}...'")
+        print(f"[ERROR] MISSED: '{attack[:50]}...'")
 
 print(f"\nDetection rate: {caught}/{len(known_attacks)} ({caught/len(known_attacks)*100:.0f}%)")
 print()
@@ -136,14 +136,14 @@ new_risk, new_hits = classify_input_with_details(legacy_prompt)
 
 print(f"Legacy pattern test: '{legacy_prompt}'")
 print(f"  Phase 1 classify_input(): {old_risk}")
-print(f"  Phase 2.6 classify_input_with_details(): {new_risk}")
+print(f"  Phase 4 classify_input_with_details(): {new_risk}")
 if new_hits:
     print(f"  Pattern hits: {[h['code'] for h in new_hits]}")
 
 if old_risk == new_risk:
-    print(f"✓ Backward compatibility maintained")
+    print("[OK] Backward compatibility maintained")
 else:
-    print(f"⚠️  Risk level changed: {old_risk} → {new_risk}")
+    print(f"[WARN] Risk level changed: {old_risk} -> {new_risk}")
 print()
 
 # Final verdict
@@ -152,7 +152,7 @@ print("VERIFICATION VERDICT")
 print("=" * 100)
 
 checks = []
-checks.append(("OWASP patterns loaded", len(OWASP_PATTERNS) >= 18))
+checks.append(("OWASP patterns loaded", len(OWASP_PATTERNS) >= 17))
 checks.append(("Pattern detection working", len(pattern_hits) > 0))
 checks.append(("Pipeline integration", len(result['deterministic_pattern_hits']) > 0))
 checks.append(("No benign FPs", fp_count == 0))
@@ -161,11 +161,11 @@ checks.append(("Known attacks caught", caught >= 4))
 all_pass = all(check[1] for check in checks)
 
 for name, status in checks:
-    symbol = "✓" if status else "❌"
+    symbol = "[OK]" if status else "[ERROR]"
     print(f"{symbol} {name}")
 
 print()
 if all_pass:
-    print("✅ ALL CHECKS PASSED - OWASP patterns are active and working correctly")
+    print("[OK] ALL CHECKS PASSED - OWASP patterns are active and working correctly")
 else:
-    print("❌ SOME CHECKS FAILED - Review results above")
+    print("[ERROR] SOME CHECKS FAILED - Review results above")

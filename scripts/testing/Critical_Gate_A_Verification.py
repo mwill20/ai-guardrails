@@ -49,13 +49,13 @@ for i, prompt in enumerate(prompts[:10], 1):
     sem_label = result["semantic_result"]["label"]
     sem_score = result["semantic_result"]["score"]
     
-    status = "🚫 BLOCKED" if action == "blocked" else "✓ ALLOWED"
+    status = "[BLOCKED]" if action == "blocked" else "[ALLOWED]"
     
     print(f"\n[{i}] {status}")
     print(f"    Prompt: {prompt[:70]}...")
     print(f"    Deterministic: {det_risk} (patterns: {len(det_hits)})")
     if det_hits:
-        print(f"      ⚠️  OWASP patterns triggered:")
+        print("      [WARN] OWASP patterns triggered:")
         for hit in det_hits:
             print(f"        - {hit['pattern']} [{hit['code']}]")
     print(f"    Semantic: {sem_label} (score: {sem_score:.4f})")
@@ -125,9 +125,9 @@ if fp_count > 0:
 
 # Gate A check
 if fpr <= 2.0:
-    print(f"✅ GATE A PASSED: FPR = {fpr:.1f}% ≤ 2.0%")
+    print(f"[OK] GATE A PASSED: FPR = {fpr:.1f}% <= 2.0%")
 else:
-    print(f"❌ GATE A FAILED: FPR = {fpr:.1f}% > 2.0%")
+    print(f"[ERROR] GATE A FAILED: FPR = {fpr:.1f}% > 2.0%")
 print()
 
 # Show FP details
@@ -142,13 +142,13 @@ if fp_count > 0:
         print(f"Deterministic: {fp['deterministic_risk']}")
         
         if fp['deterministic_hits']:
-            print(f"  ⚠️  DETERMINISTIC PATTERNS TRIGGERED (THIS IS THE ISSUE!):")
+            print("  [WARN] DETERMINISTIC PATTERNS TRIGGERED (THIS IS THE ISSUE!):")
             for hit in fp['deterministic_hits']:
                 print(f"    - Pattern: '{hit['pattern']}'")
                 print(f"      Code: {hit['code']}")
                 print(f"      Category: {hit['category']}")
         else:
-            print(f"  ✓ No deterministic patterns (FP from semantic layer)")
+            print("  [INFO] No deterministic patterns (FP from semantic layer)")
         
         print(f"Semantic: {fp['semantic_label']} (score: {fp['semantic_score']:.4f})")
         print(f"Combined: {fp['combined_risk']}")
@@ -162,22 +162,22 @@ print("=" * 100)
 findings = []
 
 if deterministic_fps > 0:
-    findings.append(f"❌ CRITICAL: {deterministic_fps} FPs caused by NEW OWASP patterns!")
+    findings.append(f"[ERROR] CRITICAL: {deterministic_fps} FPs caused by NEW OWASP patterns!")
     findings.append(f"   Action needed: Review and disable problematic patterns")
 else:
-    findings.append(f"✅ VERIFIED: Zero FPs from OWASP patterns")
+    findings.append("[OK] VERIFIED: Zero FPs from OWASP patterns")
 
 if semantic_fps == fp_count and fp_count <= 2:
-    findings.append(f"✅ VERIFIED: All {fp_count} FPs from semantic layer (same as baseline)")
+    findings.append(f"[OK] VERIFIED: All {fp_count} FPs from semantic layer (same as baseline)")
 else:
-    findings.append(f"⚠️  FP distribution changed from baseline")
+    findings.append("[WARN] FP distribution changed from baseline")
 
 if fpr == 1.0:
-    findings.append(f"✅ VERIFIED: FPR maintained at baseline (1.0%)")
+    findings.append("[OK] VERIFIED: FPR maintained at baseline (1.0%)")
 elif fpr <= 2.0:
-    findings.append(f"✓ FPR within Gate A threshold but increased from baseline")
+    findings.append("[WARN] FPR within Gate A threshold but increased from baseline")
 else:
-    findings.append(f"❌ FPR exceeded Gate A threshold (2.0%)")
+    findings.append("[ERROR] FPR exceeded Gate A threshold (2.0%)")
 
 for finding in findings:
     print(finding)
@@ -188,12 +188,12 @@ print("VERDICT")
 print("=" * 100)
 
 if deterministic_fps == 0 and fpr <= 2.0:
-    print("✅ RESULTS ARE LEGITIMATE")
+    print("[OK] RESULTS ARE LEGITIMATE")
     print("   - OWASP patterns are active and working")
     print("   - Zero deterministic false positives")
     print("   - FPR within acceptable threshold")
     print("   - Gate A validation is accurate")
 else:
-    print("❌ INVESTIGATION NEEDED")
+    print("[ERROR] INVESTIGATION NEEDED")
     print("   - Review false positive sources above")
     print("   - Consider disabling problematic patterns")

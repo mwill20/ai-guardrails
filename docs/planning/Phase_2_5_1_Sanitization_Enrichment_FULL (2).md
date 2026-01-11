@@ -1,10 +1,10 @@
-# Phase 2.5.1 — Deterministic Sanitization Enrichment (Concise Engineering Spec)
+# Phase 4 — Deterministic Sanitization Enrichment (Concise Engineering Spec)
 
 ## 1. Purpose
-Enhance Phase 1 deterministic sanitization using Phase 2.5 insights and modern jailbreak datasets while keeping sanitization simple, deterministic, and transparent.
+Enhance Phase 1 deterministic sanitization using Phase 3 insights and modern jailbreak datasets while keeping sanitization simple, deterministic, and transparent.
 
 ## 2. Why Enhancement Is Needed
-Phase 1 sanitization is intentionally minimal. Phase 2.5 identifies patterns and tokens that occur frequently in adversarial prompts. Phase 2.5.1 converts these insights into improved deterministic rules.
+Phase 1 sanitization is intentionally minimal. Phase 3 identifies patterns and tokens that occur frequently in adversarial prompts. Phase 4 converts these insights into improved deterministic rules.
 
 ## 3. Data-Driven Rule Discovery
 Analyze:
@@ -62,4 +62,4 @@ Not included:
 - Reasoning guardrails  
 
 ## 9. Summary
-Phase 2.5.1 introduces a feedback-driven method to evolve deterministic sanitization using real adversarial data. It keeps Phase 1 simple while improving security coverage and aligning with OWASP.
+Phase 4 introduces a feedback-driven method to evolve deterministic sanitization using real adversarial data. It keeps Phase 1 simple while improving security coverage and aligning with OWASP.

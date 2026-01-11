@@ -1,6 +1,6 @@
 """
-"""Check WHY benign prompts are being blocked.
-Test a few truly benign samples through the guardrail.
+Check why benign prompts are being blocked.
+Test a few samples through the guardrail.
 """
 
 from pathlib import Path
@@ -37,6 +37,6 @@ for i in range(10):
     print(f"  Action: {result['log_entry']['action']}")
     
     if result['log_entry']['action'] == 'blocked':
-        print(f"  ⚠️  BLOCKED! Why?")
+        print(f"  [WARN]  BLOCKED! Why?")
         print(f"     - Semantic score: {result['semantic_result']['score']:.4f}")
         print(f"     - OWASP: {result['log_entry'].get('owasp_codes', [])}")

@@ -7,10 +7,16 @@ Check if the 93.6% FPR is due to:
 """
 
 import json
+from pathlib import Path
 from datasets import load_dataset
 
 # Load the most recent eval results
-eval_file = "reports/phase_2_51_eval_results_20251212_082243.json"
+project_root = Path(__file__).parent.parent.parent
+eval_dir = project_root / "reports"
+eval_files = sorted(eval_dir.glob("phase_*_eval_results_*.json"), key=lambda p: p.stat().st_mtime)
+if not eval_files:
+    raise FileNotFoundError("No phase eval results found in reports/. Run Eval.py first.")
+eval_file = str(eval_files[-1])
 
 print("=" * 80)
 print("ANALYZING ACTUAL EVAL RESULTS")

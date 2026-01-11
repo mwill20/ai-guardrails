@@ -6,7 +6,7 @@
   **An ongoing project** building a production-grade, multi-layered prompt security system combining deterministic OWASP patterns, semantic ML-based detection, and policy enforcement to protect AI/Agentic Systems from prompt injection and jailbreak attacks.
 </div>
 
-> **Project Status:** Active development | Phase 2.6 in progress  
+> **Project Status:** Active development | Phase 4 in progress  
 > **Focus:** Systematic security engineering methodology with measurement-driven decisions
 
 ## 📁 Project Structure
@@ -65,7 +65,7 @@ Guardrails/
 
 ## 🎯 Project Status & Roadmap
 
-### Current Phase: 2.6 - Deterministic Enrichment 🔄
+### Current Phase: 4 - Deterministic Enrichment 🔄
 
 **Objective:** Improve xTRam1 TPR from 25.4% → ≥40% by adding pattern-based detection rules discovered through systematic evaluation log analysis.
 
@@ -92,11 +92,11 @@ Guardrails/
   - Mean TPR: **66.6%** across attack datasets
   - Core Use Cases FPR: **0%** (160/160 passed)
 
-#### ✅ Phase 2.5: Clean Corpus Validation
+#### ✅ Phase 3: Clean Corpus Validation
 - Built Clean_Benign_Corpus_v1 (200 vetted prompts across 8 categories)
 - Discovered TrustAIRLab "benign" dataset contamination
 - Validated 1.0% FPR on production-representative prompts
-- **Decision:** Deferred semantic intent layer to Phase 3.5 (cost/benefit analysis)
+- **Decision:** Deferred semantic intent layer to Phase 6 (cost/benefit analysis)
 
 ## 🚀 Quick Start
 
@@ -169,9 +169,9 @@ python scripts/testing/Test_Benign_Blocking.py
 
 ### Three-Layer Defense-in-Depth
 
-1. **Deterministic Layer (Phase 1 + 2.6 Enhancement)**
+1. **Deterministic Layer (Phase 1 + 4 Enhancement)**
    - OWASP Top 10 LLM patterns (Phase 1 baseline)
-   - Evidence-based attack patterns from eval logs (Phase 2.6)
+   - Evidence-based attack patterns from eval logs (Phase 4)
    - Signal strength scoring: weak (boundary testing) vs strong (system markers, control phrases)
    - Fast (<10ms), explainable, zero ML cost
 
@@ -180,14 +180,14 @@ python scripts/testing/Test_Benign_Blocking.py
    - ML-based intent classification for novel attacks
    - Handles obfuscation, paraphrasing, multi-turn attacks
 
-3. **Policy Layer (Planned Phase 3+)**
+3. **Policy Layer (Planned Phase 7+)**
    - Layer precedence enforcement (safety ratchet: deterministic escalates, never downgrades)
    - No silent allow invariant (explicit ALLOW/SANITIZE/BLOCK required)
    - Context-aware decisions (user roles, sensitivity levels)
 
 ### Risk Scoring & Signal Combination
 
-**Deterministic Signals (Phase 2.6):**
+**Deterministic Signals (Phase 4):**
 - Score 3 (any category) → **high_risk**
 - Score 2+2 (two strong signals) → **high_risk**
 - Score 2+1 (strong + weak) → **medium_risk**
@@ -215,7 +215,7 @@ python scripts/testing/Test_Benign_Blocking.py
 
 ## 🎯 Planned Enhancements
 
-### Phase 2.6: Deterministic Enrichment (Active)
+### Phase 4: Deterministic Enrichment (Active)
 **Timeline:** 3-5 days | **Status:** Pattern discovery in progress
 
 1. **Pattern Discovery Pipeline**
@@ -236,11 +236,11 @@ python scripts/testing/Test_Benign_Blocking.py
    - **Gate B1:** xTRam1 TPR ≥40% (baseline 25.4%, +15pp lift)
    - **Gate B2:** Mean TPR ≥71% (baseline 66.6%, +5pp lift)
 
-### Phase 3: Adversarial Testing & Red-Teaming (Planned)
+### Phase 5: Adversarial Testing & Red-Teaming (Planned)
 **Focus:** Stress-test both layers against novel attack vectors
 
 1. **Coverage Gap Analysis**
-   - Document remaining FNs after Phase 2.6
+   - Document remaining FNs after Phase 4
    - Categorize bypass techniques (obfuscation, encoding, multi-turn)
    - Use HackAPrompt Companion for dynamic attack generation
 
@@ -254,14 +254,14 @@ python scripts/testing/Test_Benign_Blocking.py
    - Structured logging (JSON format with model/pattern IDs)
    - Timeout guards for regex (prevent catastrophic backtracking)
 
-### Phase 3.5: Semantic Intent Layer (Deferred)
+### Phase 6: Semantic Intent Layer (Deferred)
 **Rationale:** Cost/benefit analysis showed unfavorable ROI for 1.0% → 0% FPR improvement
 
 - LLM-based intent classification for edge cases
 - Explainability enhancements ("why was this blocked?")
 - Conditional activation (only for ambiguous prompts)
 
-### Phase 4+: Production Hardening (Future)
+### Phase 7+: Production Hardening (Future)
 - OWASP AI Top 10 mapping and compliance documentation
 - Reasoning guardrails (tool use governance for agentic systems)
 - Custom linter (meta-guardrail for policy enforcement)
@@ -281,7 +281,7 @@ python scripts/testing/Test_Benign_Blocking.py
 - Blocked by: Deterministic pattern (unknown trigger)
 - Fix: Investigate pattern
 
-**Analysis:** Both blocks from deterministic layer, not semantic model (jailbreak_prob: null). ProtectAI v2 semantic model has **0% FPR** on clean corpus.
+**Analysis:** Both blocks are from the deterministic layer, not the semantic model (semantic label stayed benign). ProtectAI v2 semantic model has **0% FPR** on clean corpus.
 
 ## 📦 Dependencies
 
@@ -299,7 +299,7 @@ from src.OWASP_Pipeline_Guardrail import run_guardrail_pipeline
 result = run_guardrail_pipeline(user_prompt)
 # Returns: {
 #   "combined_risk": "low_risk" | "medium_risk" | "high_risk" | "critical",
-#   "semantic_result": {"label": "benign|malicious", "jailbreak_prob": float},
+#   "semantic_result": {"label": "benign|malicious", "score": float},  # score = normalized jailbreak probability
 #   "agent_visible": str,  # Message to show user
 #   "log_entry": {...}     # Full logging details
 # }
@@ -307,13 +307,13 @@ result = run_guardrail_pipeline(user_prompt)
 
 ## 📈 Success Metrics
 
-### Phase 2.5 Achievements ✅
+### Phase 3 Achievements ✅
 - **FPR < 5%** on clean benign corpus → **achieved: 1.0%**
 - **TPR > 60%** on attack datasets → **achieved: 66.6%**
 - **Core use cases: 0% FPR** → **achieved: 100%** (160/160 passed)
 - **Production-ready baseline** → semantic + deterministic layers validated
 
-### Phase 2.6 Targets 🎯
+### Phase 4 Targets 🎯
 - **Gate A:** FPR ≤2.0% (maintain low false positive rate)
 - **Gate B1:** xTRam1 TPR ≥40.0% (currently 25.4%, need +15pp lift)
 - **Gate B2:** Mean TPR ≥71.0% (currently 66.6%, need +5pp lift)
@@ -337,15 +337,15 @@ MIT License - Internal research project for learning and portfolio development
 **Michael Williams**  
 - Phase 1: Deterministic baseline (OWASP patterns)
 - Phase 2: Semantic layer + model selection (Dec 13, 2025)
-- Phase 2.5: Clean corpus validation (Dec 13, 2025)
-- Phase 2.6: Deterministic enrichment (Dec 14-15, 2025) - **In Progress**
+- Phase 3: Clean corpus validation (Dec 13, 2025)
+- Phase 4: Deterministic enrichment (Dec 14-15, 2025) - **In Progress**
 
 ---
 
 **Project Timeline:**  
 - Started: November 2025
-- Phase 2.5 Complete: December 13, 2025
-- Phase 2.6 Active: December 14, 2025
-- Next Milestone: Gate A/B validation (Phase 2.6 complete)
+- Phase 3 Complete: December 13, 2025
+- Phase 4 Active: December 14, 2025
+- Next Milestone: Gate A/B validation (Phase 4 complete)
 
 **GitHub:** [mwill20/ai-guardrails](https://github.com/mwill20/ai-guardrails)

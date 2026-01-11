@@ -1,5 +1,5 @@
 """
-Pattern Discovery Pipeline - Phase 2.6 Deterministic Enrichment
+Pattern Discovery Pipeline - Phase 4 Deterministic Enrichment
 ================================================================
 
 Purpose: Extract attack patterns from evaluation logs (false negatives) and rank by priority_score.
@@ -292,7 +292,7 @@ def extract_patterns_from_prompts(prompts: List[str], category: str) -> Dict[str
 def main():
     """Main pipeline execution."""
     print("=" * 70)
-    print("Pattern Discovery Pipeline - Phase 2.6")
+    print("Pattern Discovery Pipeline - Phase 4")
     print("=" * 70)
     print()
     

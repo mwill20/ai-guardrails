@@ -122,7 +122,7 @@ what techniques might researchers use to evaluate prompt injection vulnerabiliti
                      │
                      ▼
         ┌────────────────────────────────┐
-        │ Phase 3: Re-classification     │
+        │ Phase 5: Re-classification     │
         │ (Jailbreak-Detector on         │
         │  simplified intent statement)  │
         │ Score: 0.98 → BLOCK            │
@@ -262,8 +262,8 @@ Simplified Intent:
 **File:** `OWASP_Pipeline_Guardrail.py`
 - [ ] Add `semantic_intent_analyzer.py` module
 - [ ] Modify `_map_jailbreak_to_semantic()`:
-  - Lines 212-220: When `jailbreak_prob` in range 0.50-0.92 (suspicious tier)
-  - Call `extract_intent(text, jailbreak_prob, owasp_hits)`
+  - Lines 212-220: When `semantic_score` in range 0.50-0.92 (suspicious tier)
+  - Call `extract_intent(text, semantic_score, owasp_hits)`
   - Re-run `run_jailbreak_detector()` on simplified intent
   - Use re-classification score for final decision
 - [ ] Add caching: don't re-analyze identical prompts (saves API costs)
@@ -304,9 +304,9 @@ def reclassify_with_intent(
   - Goal: Increase Lakera TPR to >50% without affecting FPR
 - [ ] **Phase 2:** Test on TrustAIRLab regular (benign prompts, 93.6% FPR)
   - Goal: Reduce FPR to <10% (clear creative prompts)
-- [ ] **Phase 3:** Full eval on all 5 datasets
+- [ ] **Phase 5:** Full eval on all 5 datasets
   - Success criteria: TPR >50%, FPR <10%
-- [ ] **Phase 4:** A/B test in production (if applicable)
+- [ ] **Phase 7:** A/B test in production (if applicable)
   - Monitor: latency increase, cost per query, user complaints
 
 **File:** `Eval.py`
@@ -341,8 +341,8 @@ def reclassify_with_intent(
 - [ ] **Phase 0:** Prototype with 3 candidate models on 50 samples
 - [ ] **Phase 1:** Select best model, integrate into pipeline
 - [ ] **Phase 2:** Test on full eval datasets
-- [ ] **Phase 3:** Shadow mode (log intent extractions, don't change decisions)
-- [ ] **Phase 4:** Gradual rollout (10% → 50% → 100% of traffic)
+- [ ] **Phase 5:** Shadow mode (log intent extractions, don't change decisions)
+- [ ] **Phase 7:** Gradual rollout (10% → 50% → 100% of traffic)
 
 **Monitoring Metrics:**
 - [ ] **Effectiveness:** TPR, FPR, Lakera TPR specifically

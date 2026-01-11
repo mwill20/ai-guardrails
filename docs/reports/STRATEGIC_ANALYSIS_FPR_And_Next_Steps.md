@@ -135,14 +135,14 @@ Allowlists typically fail-open: "If it matches allowlist, skip other checks."
 **Gated Allowlist Architecture:**
 
 ```python
-def apply_allowlist_downgrade(prompt: str, jailbreak_prob: float) -> float:
+def apply_allowlist_downgrade(prompt: str, semantic_score: float) -> float:
     """
     Allowlist can only downgrade ambiguous cases, never skip detection entirely.
     """
     
     # Only apply if prompt is in ambiguous band
-    if not (0.40 <= jailbreak_prob <= 0.65):
-        return jailbreak_prob  # Too safe or too risky, allowlist doesn't apply
+    if not (0.40 <= semantic_score <= 0.65):
+        return semantic_score  # Too safe or too risky, allowlist doesn't apply
     
     # Check for benign instruction patterns
     benign_patterns = [
@@ -155,12 +155,12 @@ def apply_allowlist_downgrade(prompt: str, jailbreak_prob: float) -> float:
         # Check for override/bypass signals (fail-closed)
         override_signals = ["ignore", "bypass", "reveal", "system prompt", "override"]
         if any(signal in prompt.lower() for signal in override_signals):
-            return jailbreak_prob  # Override detected, keep original score
+            return semantic_score  # Override detected, keep original score
         
         # Downgrade but don't eliminate risk
-        return jailbreak_prob * 0.6  # Reduce by 40%, not 100%
+        return semantic_score * 0.6  # Reduce by 40%, not 100%
     
-    return jailbreak_prob
+    return semantic_score
 ```
 
 **Key principles:**
@@ -312,7 +312,7 @@ This model is optimized for:
 - Roleplay jailbreaks without explicit override
 - Steganographic prompts
 
-**This is why Phase 3 adversarial testing matters:** You need to know your blind spots.
+**This is why Phase 5 adversarial testing matters:** You need to know your blind spots.
 
 ### Strategic Implication
 
@@ -321,7 +321,7 @@ This model is optimized for:
 Long-term, you'll want:
 - ProtectAI v2 for injection detection (current)
 - Additional toxicity detector (Phase 2.X)
-- Semantic intent layer for ambiguous cases (Phase 2.6)
+- Semantic intent layer for ambiguous cases (Phase 4)
 - Ensemble voting for critical decisions
 
 **But right now, ProtectAI alone is a massive improvement over madhurjindal.**
@@ -361,9 +361,9 @@ _classifier = pipeline("text-classification", model=_MODEL_NAME, device=device)
 label_lower = label.lower()
 
 if any(word in label_lower for word in ["benign", "safe", "legit"]):
-    jailbreak_prob = 1.0 - score
+    semantic_score = 1.0 - score
 else:
-    jailbreak_prob = score
+    semantic_score = score
 ```
 
 **Issue:** Doesn't handle all label schemes explicitly. Relies on substring matching.
@@ -400,9 +400,9 @@ def _is_benign_prediction(label: str) -> bool:
 
 # Usage
 if _is_benign_prediction(label):
-    jailbreak_prob = 1.0 - score
+    semantic_score = 1.0 - score
 else:
-    jailbreak_prob = score
+    semantic_score = score
 ```
 
 **Why this matters:**
@@ -505,7 +505,7 @@ for prompt in benign_corpus:
     if result.action == "BLOCKED":
         results.append({
             "prompt": prompt,
-            "jailbreak_prob": result.jailbreak_prob,
+            "semantic_score": result.semantic_score,
             "reason": result.reason
         })
 ```
@@ -546,7 +546,7 @@ Document decisions → update guardrail policy → remeasure.
 
 ## Phased Rollout Strategy (The Professional Path)
 
-### Phase 2.5.1 — Lock In Model Swap (This Week)
+### Phase 4 — Lock In Model Swap (This Week)
 
 **Goal:** Make current improvements production-safe.
 
@@ -566,7 +566,7 @@ Document decisions → update guardrail policy → remeasure.
 
 ---
 
-### Phase 2.5.2 — Build Clean Benign Corpus (Next Week)
+### Phase 3 — Build Clean Benign Corpus (Next Week)
 
 **Goal:** Get accurate FPR measurement.
 
@@ -588,7 +588,7 @@ Document decisions → update guardrail policy → remeasure.
 
 ---
 
-### Phase 2.5.3 — Decide on Intent Layer (After Measurement)
+### Phase 6 — Decide on Intent Layer (After Measurement)
 
 **Goal:** Determine if semantic intent layer is worth the complexity.
 
@@ -618,23 +618,23 @@ Document decisions → update guardrail policy → remeasure.
 
 ---
 
-### Phase 2.6 — Semantic Intent Layer (If Justified)
+### Phase 4 — Semantic Intent Layer (If Justified)
 
 **Goal:** Reduce FPR from ~6% to 2-3% with explainability.
 
 **Architecture:**
 ```python
-def semantic_intent_analysis(prompt: str, jailbreak_prob: float) -> dict:
+def semantic_intent_analysis(prompt: str, semantic_score: float) -> dict:
     """
     LLM-based intent classification for ambiguous cases.
-    Only called when 0.40 <= jailbreak_prob <= 0.65
+    Only called when 0.40 <= semantic_score <= 0.65
     """
     
     llm_prompt = f"""
     Classify this user prompt's intent:
     
     Prompt: {prompt}
-    Detector Score: {jailbreak_prob}
+    Detector Score: {semantic_score}
     
     Classify as:
     - BENIGN_INSTRUCTION: legitimate task request
@@ -708,7 +708,7 @@ You can do all of this **because you're not racing to production.**
 
 ### The Realistic Scope
 
-**Phase 4 "Production Hardening" should become "Learning & Portfolio":**
+**Phase 7 "Production Hardening" should become "Learning & Portfolio":**
 
 Instead of:
 - Kubernetes deployment
@@ -752,12 +752,12 @@ Focus on:
 **Layer 2: Semantic Detection (ProtectAI v2)**
 - ML-based prompt injection detection
 - Catches obfuscation and context manipulation
-- **Status:** Phase 2.5 complete ✅
+- **Status:** Phase 3 complete ✅
 
 **Layer 3: Intent Analysis (Future)**
 - LLM-based intent classification
 - Handles ambiguous cases, provides explainability
-- **Status:** Phase 2.6 planned, pending FPR measurement
+- **Status:** Phase 4 planned, pending FPR measurement
 
 ### The Measurement Gap (What's Missing)
 
@@ -839,9 +839,9 @@ Focus on:
 - Measure cost and latency
 - Document explainability examples
 
-**Output:** Phase 2.6 complete, FPR < 3%
+**Output:** Phase 4 complete, FPR < 3%
 
-**7. Adversarial Testing (Phase 3)**
+**7. Adversarial Testing (Phase 5)**
 
 **Focus on ProtectAI blind spots:**
 - Novel obfuscation (Base64, multi-language)
@@ -854,7 +854,7 @@ Focus on:
 - Document coverage gaps
 - Decide on additional layers (toxicity, obfuscation handling)
 
-**Output:** Phase 3 evaluation report
+**Output:** Phase 5 evaluation report
 
 ---
 
@@ -862,17 +862,17 @@ Focus on:
 
 ### Measurable Outcomes
 
-**By end of Phase 2.5 (current sprint):**
+**By end of Phase 3 (current sprint):**
 - ✅ True FPR measured (not estimated): **X%** on clean corpus
 - ✅ Attack detection: **66.6%** mean TPR across 4 attack datasets
 - ✅ Code is production-safe (robust label handling, logging, fail-closed)
 
-**By end of Phase 2.6 (if justified):**
+**By end of Phase 4 (if justified):**
 - ✅ FPR < 3% on clean corpus
 - ✅ Explainability: "Why was this blocked?" logs exist
 - ✅ Cost < $0.01 per prompt for intent layer
 
-**By end of Phase 3:**
+**By end of Phase 5:**
 - ✅ Blind spots documented (know where you're weak)
 - ✅ Adversarial test suite (reproducible red-teaming)
 - ✅ Coverage map: which attack styles are detected vs missed

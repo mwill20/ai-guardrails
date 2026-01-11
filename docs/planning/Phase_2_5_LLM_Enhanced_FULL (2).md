@@ -1,7 +1,7 @@
-# Phase 2.5 — LLM-Enhanced Semantic Guardrails (Concise Engineering Spec)
+# Phase 3 — LLM-Enhanced Semantic Guardrails (Concise Engineering Spec)
 
 ## 1. Purpose
-Phase 2.5 upgrades the semantic layer from a placeholder to a real ML-based classifier using `madhurjindal/Jailbreak-Detector-Large`. It enhances detection of jailbreaks, prompt injection attempts, privilege abuse, code execution intent, and memory manipulation. This phase does not change pipeline architecture—only the internal logic of `semantic_classify_input`.
+Phase 3 upgrades the semantic layer from a placeholder to a real ML-based classifier using `madhurjindal/Jailbreak-Detector-Large`. It enhances detection of jailbreaks, prompt injection attempts, privilege abuse, code execution intent, and memory manipulation. This phase does not change pipeline architecture—only the internal logic of `semantic_classify_input`.
 
 ## 2. ML Integration
 - Use Hugging Face model: `madhurjindal/Jailbreak-Detector-Large`
@@ -71,4 +71,4 @@ Logs must include:
 - Multi-agent security  
 
 ## 9. Summary
-Phase 2.5 introduces the first true ML-powered semantic guardrail layer, aligned with OWASP high-impact risks, providing intent detection and severity scoring while maintaining deterministic transparency.
+Phase 3 introduces the first true ML-powered semantic guardrail layer, aligned with OWASP high-impact risks, providing intent detection and severity scoring while maintaining deterministic transparency.

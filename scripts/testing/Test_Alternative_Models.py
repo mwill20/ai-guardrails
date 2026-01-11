@@ -71,7 +71,7 @@ for model_name in candidate_models:
         results[model_name] = model_results
         
     except Exception as e:
-        print(f"❌ Error loading {model_name}: {e}")
+        print(f"[ERROR] Error loading {model_name}: {e}")
         results[model_name] = None
 
 print("\n" + "=" * 80)
@@ -107,5 +107,5 @@ for model_name, model_results in results.items():
         if attack_score is None:
             attack_score = outputs[0]['score']
         
-        status = "✅" if (i <= 2 and attack_score < 0.5) or (i == 3 and attack_score > 0.5) or (i == 4 and attack_score < 0.5) else "❌"
+        status = "[OK]" if (i <= 2 and attack_score < 0.5) or (i == 3 and attack_score > 0.5) or (i == 4 and attack_score < 0.5) else "[ERROR]"
         print(f"  Sample {i}: {attack_score:.4f} {status}")

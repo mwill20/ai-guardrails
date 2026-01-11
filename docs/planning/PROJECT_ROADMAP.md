@@ -2,7 +2,7 @@
 **Master Checklist & Progress Tracker**
 
 **Last Updated:** December 13, 2025  
-**Current Phase:** Phase 2.51 (Next Step)  
+**Current Phase:** Phase 4 (Next Step)  
 **Project Type:** Learning & Portfolio Development  
 **Production Ready:** Phase 2 complete, FPR validated at 1.0%
 
@@ -31,17 +31,18 @@ Build a production-grade, multi-layered prompt security system that:
 
 | Phase | Status | FPR | TPR | Notes |
 |-------|--------|-----|-----|-------|
-| **Phase 1** | ✅ Complete | N/A | N/A | Deterministic patterns (OWASP-aligned) |
-| **Phase 2** | ✅ Complete | 1.0% | 66.6% | ProtectAI v2 model (validated) |
-| **Phase 2.6** | 🎯 **NEXT** | TBD | TBD | Deterministic enrichment (attack patterns) |
-| **Phase 2.5** | ⏸️ Deferred → 3.5 | N/A | N/A | Intent layer (explainability/coverage) |
-| **Phase 3** | 📋 Planned | TBD | TBD | Adversarial testing & red-teaming |
-| **Phase 4** | 📋 Planned | N/A | N/A | Documentation & portfolio polish |
-| **Phase 5** | 📋 Optional | N/A | N/A | OWASP AI Top 10 mapping |
-| **Phase 5.5** | 📋 Optional | N/A | N/A | Reasoning guardrails (tool governance) |
-| **Phase 6** | 📋 Optional | N/A | N/A | Custom linter (meta-guardrail) |
+| Phase 1 | [OK] Complete | N/A | N/A | Deterministic patterns (OWASP-aligned) |
+| Phase 2 | [OK] Complete | 1.0% | 66.6% | ProtectAI v2 model (validated) |
+| Phase 3 | [OK] Complete | 1.0% | N/A | Clean benign corpus validation |
+| Phase 4 | [ACTIVE] Next | TBD | TBD | Deterministic enrichment (attack patterns) |
+| Phase 5 | [PLANNED] | TBD | TBD | Adversarial testing & red-teaming |
+| Phase 6 | [DEFERRED] | N/A | N/A | Intent layer (explainability/coverage) |
+| Phase 7 | [PLANNED] | N/A | N/A | Documentation & portfolio polish |
+| Phase 8 | [OPTIONAL] | N/A | N/A | OWASP AI Top 10 mapping |
+| Phase 9 | [OPTIONAL] | N/A | N/A | Reasoning guardrails (tool governance) |
+| Phase 10 | [OPTIONAL] | N/A | N/A | Custom linter (meta-guardrail) |
 
-**Legend:** ✅ Complete | 🎯 Active | 🔄 In Progress | ⏸️ Deferred | 📋 Planned | ❌ Skipped
+**Legend:** [OK] Complete | [ACTIVE] Next | [IN_PROGRESS] | [DEFERRED] | [PLANNED] | [SKIPPED]
 
 ---
 
@@ -96,7 +97,7 @@ Build a production-grade, multi-layered prompt security system that:
 - TPR: 53.5% → 66.6% (mean across attack datasets)
 - Improvement: -69.4 pp FPR, +13.1 pp TPR
 
-#### Phase 2.5: Clean Corpus Validation
+#### Phase 3: Clean Corpus Validation
 **Problem:** TrustAIRLab "benign" dataset contaminated with attacks
 
 **Solution:**
@@ -110,7 +111,7 @@ Build a production-grade, multi-layered prompt security system that:
 - Edge cases: 10% FPR (security education, creative AI writing)
 - **Both blocks from deterministic patterns, not semantic model**
 
-**Key Insight:** ProtectAI v2 semantic model has 0% FPR on clean corpus (jailbreak_prob: null for blocked prompts = deterministic trigger)
+**Key Insight:** ProtectAI v2 semantic model has 0% FPR on clean corpus (blocked prompts were deterministic triggers; semantic label stayed benign)
 
 **Decision:** Production-ready at 1.0% FPR, model swap highly successful
 
@@ -131,7 +132,7 @@ Build a production-grade, multi-layered prompt security system that:
 
 ---
 
-### 🎯 Phase 2.6: Deterministic Sanitization Enrichment (NEXT STEP)
+### 🎯 Phase 4: Deterministic Sanitization Enrichment (NEXT STEP)
 
 **Purpose:** Strengthen deterministic layer using Phase 2 intelligence
 
@@ -144,7 +145,7 @@ Build a production-grade, multi-layered prompt security system that:
 - Cheap + auditable alternative to adding LLM reasoning overhead
 
 **Data Sources for Pattern Discovery:**
-- ✅ ProtectAI v2 high-confidence malicious detections (jailbreak_prob > 0.9)
+- ✅ ProtectAI v2 high-confidence malicious detections (semantic_score > 0.9)
 - 🔄 xTRam1 dataset analysis (find 75% that bypass current detection)
 - 🔄 TrustAIRLab attack datasets (jailbreak, DarkWeb queries)
 - 🔄 Lakera PINT benchmark patterns
@@ -236,7 +237,7 @@ Build a production-grade, multi-layered prompt security system that:
 
 ---
 
-**Phase 2.6 Checklist:**
+**Phase 4 Checklist:**
 
 #### Step 1: Data-Driven Pattern Discovery (Week 1) ✅ **COMPLETE**
 - [x] Run `Eval.py` on standardized datasets, save detailed logs:
@@ -259,9 +260,9 @@ Build a production-grade, multi-layered prompt security system that:
 - [x] Generate comprehensive analysis: `reports/phase2_6/Pattern_Discovery_Report.md`
 - [x] **FP Analysis:** Identified double-edged patterns (top FN patterns also top FP triggers)
 
-**⚠️ CRITICAL FINDING:** Pattern discovery revealed that top pattern candidates ("Act as", "pretend", "roleplay") are **double-edged swords** - they appear in both FN (attacks missed) and FP (benign blocked). Adding these to deterministic layer would violate Gate A (FPR >2%). These patterns require **intent classification**, not keyword matching, validating Phase 3.5 intent layer justification.
+**⚠️ CRITICAL FINDING:** Pattern discovery revealed that top pattern candidates ("Act as", "pretend", "roleplay") are **double-edged swords** - they appear in both FN (attacks missed) and FP (benign blocked). Adding these to deterministic layer would violate Gate A (FPR >2%). These patterns require **intent classification**, not keyword matching, validating Phase 6 intent layer justification.
 
-**DECISION:** Skip remaining Phase 2.6 steps. No viable deterministic patterns found. Proceed to Phase 3 adversarial testing.
+**DECISION:** Skip remaining Phase 4 steps. No viable deterministic patterns found. Proceed to Phase 5 adversarial testing.
 
 #### Step 2: Pattern Categorization & Prioritization ❌ **SKIPPED**
 - [ ] Load `pattern_candidates_v1.jsonl` (structured input from Step 1)
@@ -301,7 +302,7 @@ Build a production-grade, multi-layered prompt security system that:
   - FPR regression check (clean corpus)
   - Pattern effectiveness analysis (which patterns caught most attacks)
   - Latency impact (deterministic is fast, but measure anyway)
-- [ ] Update `WORK_LOG` with Phase 2.6 findings
+- [ ] Update `WORK_LOG` with Phase 4 findings
 **Success Criteria:**
 - ✅ **Gate A (FPR):** FPR remains ≤ 2.0% on Clean_Benign_Corpus_v1 (CI blocker)
 - ✅ **Gate B (Coverage):** xTRam1 TPR improves from 25.4% → ≥40% (+15pp minimum)
@@ -318,9 +319,9 @@ Build a production-grade, multi-layered prompt security system that:
 
 **Out of Scope:**
 - ❌ ML-based rewriting or paraphrasing
-- ❌ LLM intent classification (that's Phase 2.5)
-- ❌ Dynamic policies or reasoning guardrails (that's Phase 5.5)
-- ❌ Multi-turn state tracking (that's Phase 3)
+- ❌ LLM intent classification (that's Phase 6)
+- ❌ Dynamic policies or reasoning guardrails (that's Phase 9)
+- ❌ Multi-turn state tracking (that's Phase 5)
 
 **Estimated Duration:** 3-5 days (includes pattern discovery, implementation, evaluation)
 
@@ -537,7 +538,7 @@ Category-prefixed, sequential per category:
 
 ---
 
-### 📋 Phase 3: Adversarial Testing & Attack-Side Hardening
+### 📋 Phase 5: Adversarial Testing & Attack-Side Hardening
 
 **Purpose:** Systematically find and fix coverage gaps through red-teaming
 
@@ -546,14 +547,14 @@ Category-prefixed, sequential per category:
 - Cost/benefit unfavorable for 1% → 0% improvement
 - Engineering overkill for 2 edge case prompts
 
-**Revised Purpose (Post-Phase 3 Decision):**
+**Revised Purpose (Post-Phase 5 Decision):**
 - **NOT for FPR reduction** (already solved)
 - **FOR explainability** (SOC analyst understanding)
 - **FOR coverage gaps** (attacks avoiding injection language)
 - **FOR multi-step narratives** (reasoning over attack chains)
 
 **New Justification Criteria:**
-After Phase 3 adversarial testing, intent layer warranted if:
+After Phase 5 adversarial testing, intent layer warranted if:
 - ✅ Coverage gaps discovered (attacks with no keywords)
 - ✅ Multi-turn attacks show state-tracking need
 - ✅ Obfuscation attacks bypass deterministic + semantic layers
@@ -574,7 +575,7 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
     
     **Triggering Rules (TIGHT CONTRACT - Keep Cost/Latency Bounded):**
     Only called when ONE of:
-    1. Semantic confidence is ambiguous (0.4 ≤ jailbreak_prob ≤ 0.7)
+    1. Semantic confidence is ambiguous (0.4 ≤ semantic_score ≤ 0.7)
     2. Layer conflict: deterministic=low_risk BUT semantic=malicious (or vice versa)
     3. Multi-turn risk score increases across conversation
     4. Coverage gap: attack style from ATTACK_TAXONOMY.md that bypasses layers 1+2
@@ -593,11 +594,11 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
     # }
 ```
 
-**Phase 3.5 Checklist (If Pursued):**
+**Phase 6 Checklist (If Pursued):**
 
 #### Prerequisites (Must Complete First)
-- [ ] Phase 2.6 complete (deterministic enrichment)
-- [ ] Phase 3 complete (adversarial testing)
+- [ ] Phase 4 complete (deterministic enrichment)
+- [ ] Phase 5 complete (adversarial testing)
 - [ ] Coverage gap analysis shows need (not just nice-to-have)
 - [ ] Attack taxonomy completed (maps which layer should catch what)
 - [ ] **Accepted Risk category defined:** Won't-fix attacks documented in Coverage_Matrix.md
@@ -617,7 +618,7 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 - [ ] Implement caching (avoid redundant LLM calls for similar prompts)
 
 #### Step 3: Evaluation
-- [ ] Test on Phase 3 coverage gaps (attacks that bypassed deterministic + semantic)
+- [ ] Test on Phase 5 coverage gaps (attacks that bypassed deterministic + semantic)
 - [ ] Measure latency impact (LLM adds ~500ms-2s per call)
 - [ ] Calculate cost per prompt (LLM API costs)
 - [ ] Evaluate explainability quality (human review of reasoning)
@@ -633,13 +634,13 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 - ✅ Latency acceptable (<2s per ambiguous prompt)
 - ✅ Cost justified by coverage improvement
 
-**Decision Point:** Revisit after Phase 3 adversarial testing
+**Decision Point:** Revisit after Phase 5 adversarial testing
 
-**Status:** Deferred, decision pending Phase 3 results
+**Status:** Deferred, decision pending Phase 5 results
 
 ---
 
-### 📋 Phase 3: Adversarial Testing & Attack-Side Hardening
+### 📋 Phase 5: Adversarial Testing & Attack-Side Hardening
 
 **Purpose:** Systematically find and fix coverage gaps through red-teaming
 
@@ -681,7 +682,7 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 - Translation attacks (ask for translation of malicious text)
 - Code-switching mid-attack
 
-**Phase 3 Checklist:**
+**Phase 5 Checklist:**
 
 #### Step 1: Baseline Coverage Documentation (Week 1)
 - [ ] Create `docs/reports/Coverage_Matrix.md`
@@ -732,19 +733,19 @@ For each discovered attack type that bypasses guardrails:
 - [ ] Document residual risk (if no fix available)
 
 **Attack Classification Categories:**
-1. **Fixable (Deterministic):** Add pattern to Phase 2.6 enrichment
+1. **Fixable (Deterministic):** Add pattern to Phase 4 enrichment
 2. **Fixable (Semantic):** Model limitation, may need normalization layer or different model
-3. **Fixable (Intent Layer):** Requires Phase 3.5 reasoning (ambiguity, multi-turn, obfuscation)
+3. **Fixable (Intent Layer):** Requires Phase 6 reasoning (ambiguity, multi-turn, obfuscation)
 4. **Accepted Risk (Documented):** Attacks requiring full natural language reasoning across long conversational histories with no deterministic or semantic signals. These represent fundamental limitations of stateless, single-turn guardrails and are explicitly documented as out-of-scope.
 
 **Accepted Risk Criteria (Won't Fix):**
-- Attack requires multi-turn state tracking beyond Phase 3.5 scope
+- Attack requires multi-turn state tracking beyond Phase 6 scope
 - No detectable patterns (deterministic, semantic, or intent-based)
 - Attack success rate < 5% in adversarial testing
 - Cost/complexity of fix exceeds portfolio value
 - Explicitly documented in Coverage_Matrix.md with justification
 
-**Purpose:** Bounds Phase 3.5 mandate to solvable problems, prevents scope creep into "solve all of NLP"
+**Purpose:** Bounds Phase 6 mandate to solvable problems, prevents scope creep into "solve all of NLP"
 
 #### Step 7: Documentation & Portfolio
 - [ ] Create `docs/reports/Phase_3_Adversarial_Testing_Report.md`:
@@ -756,7 +757,7 @@ For each discovered attack type that bypasses guardrails:
 - [ ] Create visual: defense-in-depth layer effectiveness diagram
 - [ ] **Create `docs/reports/ATTACK_TAXONOMY.md`:**
   - Map: Attack Style → Example → Which Layer Should Catch → Why
-  - Identifies exactly what Phase 3.5 Intent Layer should handle
+  - Identifies exactly what Phase 6 Intent Layer should handle
   - Prevents "let's add LLM because cool" — forces justification
 
 **Success Criteria:**
@@ -768,7 +769,7 @@ For each discovered attack type that bypasses guardrails:
 - ✅ FPR regression check (still ≤ 2% on clean corpus)
 - ✅ **Accepted Risk category defined** (won't-fix attacks documented with justification)
 
-**Decision Point:** After Phase 3, decide if intent layer (Phase 3.5) is needed for coverage gaps
+**Decision Point:** After Phase 5, decide if intent layer (Phase 6) is needed for coverage gaps
 
 **Estimated Duration:** 1-2 weeks (includes dataset collection, testing, remediation)
 
@@ -782,27 +783,27 @@ For each discovered attack type that bypasses guardrails:
 - `docs/reports/ATTACK_TAXONOMY.md` (attack→layer mapping)
 - `docs/reports/Phase_3_Adversarial_Testing_Report.md`
 
-**Status:** Next after Phase 2.6
+**Status:** Next after Phase 4
 
 ---
 
-### ⏸️ Phase 3.5: Intent/Reasoning Layer (Deferred Until After Phase 3)
+### ⏸️ Phase 6: Intent/Reasoning Layer (Deferred Until After Phase 5)
 
-**Original Purpose (Phase 2.5):** LLM-based ambiguous case resolution for FPR reduction
+**Original Purpose (initial plan):** LLM-based ambiguous case resolution for FPR reduction
 
 **Why Initially Deferred:**
 - 1.0% FPR acceptable for production (99% benign pass rate)
 - Cost/benefit unfavorable for 1% → 0% improvement
 - Engineering overkill for 2 edge case prompts
 
-**Revised Purpose (Post-Phase 3 Decision):**
+**Revised Purpose (Post-Phase 5 Decision):**
 - **NOT for FPR reduction** (already solved)
 - **FOR explainability** (SOC analyst understanding)
 - **FOR coverage gaps** (attacks avoiding injection language)
 - **FOR multi-step narratives** (reasoning over attack chains)
 
 **New Justification Criteria:**
-After Phase 3 adversarial testing, intent layer warranted if:
+After Phase 5 adversarial testing, intent layer warranted if:
 - ✅ Coverage gaps discovered (attacks with no keywords)
 - ✅ Multi-turn attacks show state-tracking need
 - ✅ Obfuscation attacks bypass deterministic + semantic layers
@@ -823,7 +824,7 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
     
     **Triggering Rules (TIGHT CONTRACT - Keep Cost/Latency Bounded):**
     Only called when ONE of:
-    1. Semantic confidence is ambiguous (0.4 ≤ jailbreak_prob ≤ 0.7)
+    1. Semantic confidence is ambiguous (0.4 ≤ semantic_score ≤ 0.7)
     2. Layer conflict: deterministic=low_risk BUT semantic=malicious (or vice versa)
     3. Multi-turn risk score increases across conversation
     4. Coverage gap: attack style from ATTACK_TAXONOMY.md that bypasses layers 1+2
@@ -842,11 +843,11 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
     # }
 ```
 
-**Phase 3.5 Checklist (If Pursued):**
+**Phase 6 Checklist (If Pursued):**
 
 #### Prerequisites (Must Complete First)
-- [ ] Phase 2.6 complete (deterministic enrichment)
-- [ ] Phase 3 complete (adversarial testing)
+- [ ] Phase 4 complete (deterministic enrichment)
+- [ ] Phase 5 complete (adversarial testing)
 - [ ] Coverage gap analysis shows need (not just nice-to-have)
 - [ ] Attack taxonomy completed (maps which layer should catch what)
 - [ ] **Accepted Risk category defined:** Won't-fix attacks documented in Coverage_Matrix.md
@@ -866,7 +867,7 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 - [ ] Implement caching (avoid redundant LLM calls for similar prompts)
 
 #### Step 3: Evaluation
-- [ ] Test on Phase 3 coverage gaps (attacks that bypassed deterministic + semantic)
+- [ ] Test on Phase 5 coverage gaps (attacks that bypassed deterministic + semantic)
 - [ ] Measure latency impact (LLM adds ~500ms-2s per call)
 - [ ] Calculate cost per prompt (LLM API costs)
 - [ ] Evaluate explainability quality (human review of reasoning)
@@ -882,13 +883,13 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 - ✅ Latency acceptable (<2s per ambiguous prompt)
 - ✅ Cost justified by coverage improvement
 
-**Decision Point:** Revisit after Phase 3 adversarial testing
+**Decision Point:** Revisit after Phase 5 adversarial testing
 
-**Status:** Deferred, decision pending Phase 3 results
+**Status:** Deferred, decision pending Phase 5 results
 
 ---
 
-### 📋 Phase 4: Learning & Portfolio Development
+### 📋 Phase 7: Learning & Portfolio Development
 
 **Purpose:** Polish documentation and showcase systematic security engineering methodology
 
@@ -898,7 +899,7 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 - Show understanding of defense-in-depth architecture
 - Create reference material others wish existed
 
-**Phase 4 Checklist:**
+**Phase 7 Checklist:**
 
 #### Step 1: Documentation Audit
 - [ ] Review all work logs for completeness
@@ -956,11 +957,11 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 
 **Estimated Duration:** 3-5 days (polish existing work, not new research)
 
-**Status:** After Phase 3 complete
+**Status:** After Phase 5 complete
 
 ---
 
-### 📋 Phase 5: OWASP AI Top 10 Mapping (Optional Learning Module)
+### 📋 Phase 8: OWASP AI Top 10 Mapping (Optional Learning Module)
 
 **Purpose:** Understand recognized security frameworks (educational, not compliance)
 
@@ -982,7 +983,7 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 9. **LLM09: Overreliance** — Over-trusting LLM outputs
 10. **LLM10: Model Theft** — Unauthorized model extraction
 
-**Phase 5 Checklist:**
+**Phase 8 Checklist:**
 
 #### Step 1: Guardrail Coverage Mapping
 - [ ] For each OWASP category, document:
@@ -1015,11 +1016,11 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 
 **Estimated Duration:** 2-3 days
 
-**Status:** Optional, after Phase 4
+**Status:** Optional, after Phase 7
 
 ---
 
-### 📋 Phase 5.5: Reasoning Guardrails (Optional Advanced Topic)
+### 📋 Phase 9: Reasoning Guardrails (Optional Advanced Topic)
 
 **Purpose:** Policy-based control for agent actions and tool usage
 
@@ -1035,7 +1036,7 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 - Action chaining policies (e.g., "no automated financial transactions")
 - Context-dependent permissions (e.g., "elevated privileges require MFA")
 
-**Phase 5.5 Checklist:**
+**Phase 9 Checklist:**
 
 #### Step 1: Policy Definition Framework
 - [ ] Define policy schema (YAML/JSON for tool permissions)
@@ -1073,7 +1074,7 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 
 ---
 
-### 📋 Phase 6: Custom Guardrail Linter (Optional Meta-Guardrail)
+### 📋 Phase 10: Custom Guardrail Linter (Optional Meta-Guardrail)
 
 **Purpose:** Static analysis tool to prevent insecure guardrail code
 
@@ -1090,7 +1091,7 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 - ✅ Dangerous pattern detection (`eval`, unsafe `subprocess`, string concat for commands)
 - ✅ Policy validation (new tools must be registered with policy agent)
 
-**Phase 6 Checklist:**
+**Phase 10 Checklist:**
 
 #### Step 1: Linter Design
 - [ ] Choose AST analysis library (Python: `ast`, `libcst`, or `pylint` plugin)
@@ -1166,11 +1167,11 @@ Apply architecture to new guardrail systems (PII leakage, tool-use, data exfiltr
 | Metric | Target | Current | Status |
 |--------|--------|---------|--------|
 | **FPR (Clean Corpus)** | ≤ 2.0% | 1.0% | ✅ Excellent |
-| **TPR (Mean)** | ≥ 80% | 66.6% | 🔄 Improving (Phase 2.6, 3) |
-| **TPR (TrustAIRLab_xTRam1)** | ≥ 50% | 25.4% | ❌ Weak (Phase 2.6, 3 focus) |
+| **TPR (Mean)** | ≥ 80% | 66.6% | 🔄 Improving (Phase 4, 5) |
+| **TPR (TrustAIRLab_xTRam1)** | ≥ 50% | 25.4% | ❌ Weak (Phase 4, 5 focus) |
 | **TPR (TrustAIRLab_jailbreak)** | ≥ 95% | 100% | ✅ Excellent |
 | **TPR (TrustAIRLab_DarkWeb)** | ≥ 95% | 100% | ✅ Excellent |
-| **Latency (p95)** | <100ms | TBD | 📋 Measure in Phase 3 |
+| **Latency (p95)** | <100ms | TBD | 📋 Measure in Phase 5 |
 
 ### Portfolio Metrics
 - ✅ Clean ground truth dataset built (200 prompts, manually curated)
@@ -1195,37 +1196,37 @@ Apply architecture to new guardrail systems (PII leakage, tool-use, data exfiltr
 ## 🚀 Next Steps Summary
 
 ### Immediate (This Week)
-1. **Phase 2.6: Deterministic Enrichment** 🎯
+1. **Phase 4: Deterministic Enrichment** 🎯
    - Analyze TrustAIRLab_xTRam1 failures (find 75% bypass patterns)
    - Extract recurring patterns from ProtectAI v2 malicious detections
    - Implement enhanced deterministic rules (strong vs weak signal classification)
    - Pass Gate A (FPR ≤2%) and Gate B (xTRam1 +15pp, mean +5pp TPR)
 
 ### Short-Term (Next 2 Weeks)
-2. **Phase 3: Adversarial Testing**
+2. **Phase 5: Adversarial Testing**
    - Benchmark on adversarial datasets (Lakera, Mindgard, Giskard)
    - Dynamic red-teaming with HackAPrompt Companion
    - Test obfuscation, multi-turn, encoding attacks
    - Document coverage matrix (what's caught, what's not)
 
-3. **Phase 3.5 Decision: Intent/Reasoning Layer**
-   - Review Phase 3 coverage gaps and ATTACK_TAXONOMY.md
+3. **Phase 6 Decision: Intent/Reasoning Layer**
+   - Review Phase 5 coverage gaps and ATTACK_TAXONOMY.md
    - Decide if intent layer warranted (explainability/coverage vs. complexity/cost)
    - Check triggering contract: ambiguity, conflicts, multi-turn, coverage gaps
    - If yes: implement surgical LLM reasoning layer (NOT primary detector)
    - If no: document why and what residual risks remain
 
 ### Medium-Term (Next Month)
-4. **Phase 4: Portfolio Polish**
+4. **Phase 7: Portfolio Polish**
    - Create case studies (model selection crisis, ground truth construction, cost/benefit analysis)
    - Visual documentation (architecture diagrams, coverage matrix)
    - Ensure reproducibility (all scripts runnable, dependencies documented)
    - Learning reflections (what you'd do differently)
 
 ### Optional (As Time Allows)
-5. **Phase 5: OWASP AI Mapping** (2-3 days)
-6. **Phase 5.5: Reasoning Guardrails** (1 week)
-7. **Phase 6: Custom Linter** (3-5 days)
+5. **Phase 8: OWASP AI Mapping** (2-3 days)
+6. **Phase 9: Reasoning Guardrails** (1 week)
+7. **Phase 10: Custom Linter** (3-5 days)
 
 ---
 
@@ -1236,20 +1237,20 @@ Apply architecture to new guardrail systems (PII leakage, tool-use, data exfiltr
 | 2025-12-12 | Model swap: madhurjindal → ProtectAI v2 | 93.6% FPR crisis, ProtectAI v2 best balance | FPR: 93.6% → 24.2% |
 | 2025-12-13 | Build clean benign corpus (200 prompts) | TrustAIRLab "benign" contaminated with attacks | True FPR: 1.0% (validated) |
 | 2025-12-13 | Skip semantic intent layer for FPR | 1% → 0% improvement not worth complexity | Focus on TPR instead |
-| 2025-12-13 | Defer intent layer for coverage gaps | Revisit after Phase 3 adversarial testing | Decision pending Phase 3 |
-| 2025-12-13 | Next: Phase 2.6 (deterministic enrichment) | Address TrustAIRLab_xTRam1 weakness (25.4% TPR) | Starting immediately |
-| 2025-12-13 | Accepted Risk category for Phase 3 | Bounds Phase 3.5 scope to solvable problems | Won't fix: long multi-turn, no signals, <5% success |
+| 2025-12-13 | Defer intent layer for coverage gaps | Revisit after Phase 5 adversarial testing | Decision pending Phase 5 |
+| 2025-12-13 | Next: Phase 4 (deterministic enrichment) | Address TrustAIRLab_xTRam1 weakness (25.4% TPR) | Starting immediately |
+| 2025-12-13 | Accepted Risk category for Phase 5 | Bounds Phase 6 scope to solvable problems | Won't fix: long multi-turn, no signals, <5% success |
 | 2025-12-14 | Pattern discovery schema v1 (JSONL) | Prevent vibes-based pattern selection, enforce traceability, CI-ready | Full schema: run metadata, outcome_buckets (TP/FN/FP/TN), benign_regression, metrics (priority_score), decision (include/exclude/review) |
 
 ---025-12-13 | No silent allow invariant | All prompts get explicit action (ALLOW/SANITIZE/BLOCK) | Fail-closed by default |
 | 2025-12-13 | Signal scoring table (0-3 explicit) | Prevents ambiguous interpretation, enables precise tests | Scoring: 0=none, 1=weak, 2=clear, 3=malicious |
-| 2025-12-13 | Accepted Risk category for Phase 3 | Bounds Phase 3.5 scope to solvable problems | Won't fix: long multi-turn, no signals, <5% success |
+| 2025-12-13 | Accepted Risk category for Phase 5 | Bounds Phase 6 scope to solvable problems | Won't fix: long multi-turn, no signals, <5% success |
 
 ---
 
 ## 🎯 Current Focus
 
-**Phase 2.6: Deterministic Sanitization Enrichment**
+**Phase 4: Deterministic Sanitization Enrichment**
 
 **Goal:** Improve attack detection (TPR) by enriching deterministic patterns with Phase 2 intelligence
 
@@ -1272,13 +1273,13 @@ Apply architecture to new guardrail systems (PII leakage, tool-use, data exfiltr
 | **WORK_LOG_Phase2_Semantic_Model_Selection.md** | Phase 2 detailed history | `docs/reports/` |
 | **Clean_Benign_Corpus_Evaluation_Report.md** | 1.0% FPR validation report | `docs/reports/` |
 | **STRATEGIC_ANALYSIS_FPR_And_Next_Steps.md** | FPR crisis analysis | `docs/reports/` |
-| **ACTION_PLAN_Phase_2_5_Next_Steps.md** | Phase 2.5 code improvements | `docs/reports/` |
-| **Phase_2_5_1_Sanitization_Enrichment_FULL (2).md** | Phase 2.6 specification (fka 2.51) | `docs/planning/` |
+| **ACTION_PLAN_Phase_2_5_Next_Steps.md** | Phase 3 code improvements | `docs/reports/` |
+| **Phase_2_5_1_Sanitization_Enrichment_FULL (2).md** | Phase 4 specification (fka 2.51) | `docs/planning/` |
 
 ---
 
 **Last Updated:** December 13, 2025  
-**Next Review:** After Phase 2.6 completion (Gate A + Gate B pass)  
+**Next Review:** After Phase 4 completion (Gate A + Gate B pass)  
 **Maintained By:** Project lead (you)  
 **Status:** Living document, update after each phase milestone
 
@@ -1287,7 +1288,7 @@ Apply architecture to new guardrail systems (PII leakage, tool-use, data exfiltr
 ## 🔧 Professional Fixes Applied
 
 **Sanity Checks Completed:**
-- ✅ Phase numbering: 2.51→2.6, 2.5→3.5 (chronological, no parent/child confusion)
+- ✅ Phase numbering (linear): 2.5→3, 2.6→4, 3→5, 3.5→6, 4→7, 5→8, 5.5→9, 6→10
 - ✅ Measurement provenance: Standardized dataset names (TrustAIRLab_xTRam1, Clean_Benign_Corpus_v1)
 - ✅ FPR regression prevention: Weak signals (boundary testing) only escalate when combined
 - ✅ CI Gates: Gate A (FPR≤2%), Gate B (coverage lift +15pp xTRam1, +5pp mean)
@@ -1296,7 +1297,7 @@ Apply architecture to new guardrail systems (PII leakage, tool-use, data exfiltr
 - ✅ **Signal scoring table:** Explicit 0-3 definitions (none/weak/clear/malicious)
 - ✅ **Layer precedence rule:** Deterministic escalates only, never downgrades semantic (safety ratchet)
 - ✅ **No silent allow invariant:** All prompts get explicit action, UNKNOWN = error (fail-closed)
-- ✅ **Accepted Risk category:** Bounds Phase 3.5 scope (won't fix: long multi-turn, no signals, <5%)
+- ✅ **Accepted Risk category:** Bounds Phase 6 scope (won't fix: long multi-turn, no signals, <5%)
 - ✅ **Pattern discovery schema v1:** Full JSONL spec (run metadata, outcome_buckets, benign_regression, metrics, decision, notes)
 - ✅ **Structured pattern pipeline:** Label (TP/FN/FP/TN) → Extract → Rank by priority_score → Validate → Emit JSONL → CI/reports
 - ✅ **Traceability contract:** No raw prompt text in JSONL (prompt IDs + hashes only), git commit tracking, reproducible metrics

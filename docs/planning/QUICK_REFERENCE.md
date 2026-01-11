@@ -26,6 +26,12 @@ python scripts/analysis/Inspect_TrustAIR_Regular.py
 ```
 **Shows:** First 20 "benign" samples for manual review
 
+### Research Benign Comparison (Clean vs TrustAIRLab)
+```powershell
+python scripts/evaluation/Eval_Research_Benign_Comparison.py
+```
+**Outputs:** Side-by-side benign FPR comparison report (research-only)
+
 ### Test Benign Blocking Patterns
 ```powershell
 python scripts/testing/Test_Benign_Blocking.py
@@ -85,7 +91,7 @@ output_path = project_root / "reports" / "your_output.json"
 | **Core Use Cases FPR** | 0% |
 | **Mean TPR** | 66.6% |
 | **Production Ready** | YES ✅ |
-| **Next Phase** | Phase 3: Adversarial Testing |
+| **Next Phase** | Phase 5: Adversarial Testing |
 
 ---
 
