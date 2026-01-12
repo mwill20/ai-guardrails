@@ -14,6 +14,12 @@ python scripts/evaluation/Eval.py
 ```
 **Expected Result:** 66.6% mean TPR, detailed breakdown by dataset
 
+### Run Adversarial Pentest Suite (Phase 5)
+```powershell
+python scripts/evaluation/Eval_Adversarial_Pentest.py
+```
+**Outputs:** Attack-only detection rate on curated prompts
+
 ### Test ProtectAI Model Performance
 ```powershell
 python scripts/evaluation/Benchmark_ProtectAI.py
