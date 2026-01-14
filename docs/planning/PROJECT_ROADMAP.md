@@ -36,7 +36,7 @@ Build a production-grade, multi-layered prompt security system that:
 | Phase 3 | [OK] Complete | 1.0% | N/A | Clean benign corpus validation |
 | Phase 4 | [ACTIVE] Next | TBD | TBD | Deterministic enrichment (attack patterns) |
 | Phase 5 | [PLANNED] | TBD | TBD | Adversarial testing & red-teaming |
-| Phase 6 | [DEFERRED] | N/A | N/A | Intent layer (explainability/coverage) |
+| Phase 6 | [DEFERRED] | N/A | N/A | Intent/semantic fallback layer (explainability/coverage) |
 | Phase 7 | [PLANNED] | N/A | N/A | Documentation & portfolio polish |
 | Phase 8 | [OPTIONAL] | N/A | N/A | OWASP AI Top 10 mapping |
 | Phase 9 | [OPTIONAL] | N/A | N/A | Reasoning guardrails (tool governance) |
@@ -119,7 +119,7 @@ Build a production-grade, multi-layered prompt security system that:
 - ✅ `WORK_LOG_Phase2_Semantic_Model_Selection.md` (702 lines)
 - ✅ `Clean_Benign_Corpus_Evaluation_Report.md`
 - ✅ `STRATEGIC_ANALYSIS_FPR_And_Next_Steps.md`
-- ✅ `ACTION_PLAN_Phase_2_5_Next_Steps.md`
+- ✅ Phase 3 action plan (legacy filename: `ACTION_PLAN_Phase_2_5_Next_Steps.md`)
 
 **Files:**
 - ✅ `src/OWASP_Pipeline_Guardrail.py` (main pipeline)
@@ -248,7 +248,7 @@ Build a production-grade, multi-layered prompt security system that:
   - [x] TrustAIRLab_regular (benign, 24.2% FPR - contaminated dataset)
 - [x] Label outcomes per prompt: TP (1,355), FN (645), FP (156), TN (344)
 - [x] Extract candidate patterns from FN (missed attacks) and TP (caught attacks) prompts
-- [x] **Output structured JSONL**: `reports/phase2_6/pattern_candidates_v1.jsonl`
+- [x] **Output structured JSONL**: `reports/phase_4/pattern_candidates_v1.jsonl`
   - Schema version: `pattern_candidates.v1`
   - One JSON object per pattern (see Pattern Discovery Schema section below)
   - Traceability: prompt IDs only (no raw text), git commit, run metadata
@@ -257,7 +257,7 @@ Build a production-grade, multi-layered prompt security system that:
   - Decision: recommendation (include/exclude/review), reason, implementation notes
 - [ ] Rank patterns by `priority_score`: weighted formula (FN coverage high, FP risk low, rarity high)
 - [x] Validate patterns against Clean_Benign_Corpus_v1 (0 FP hits on top patterns)
-- [x] Generate comprehensive analysis: `reports/phase2_6/Pattern_Discovery_Report.md`
+- [x] Generate comprehensive analysis: `reports/phase_4/Pattern_Discovery_Report.md`
 - [x] **FP Analysis:** Identified double-edged patterns (top FN patterns also top FP triggers)
 
 **⚠️ CRITICAL FINDING:** Pattern discovery revealed that top pattern candidates ("Act as", "pretend", "roleplay") are **double-edged swords** - they appear in both FN (attacks missed) and FP (benign blocked). Adding these to deterministic layer would violate Gate A (FPR >2%). These patterns require **intent classification**, not keyword matching, validating Phase 6 intent layer justification.
@@ -271,7 +271,7 @@ Build a production-grade, multi-layered prompt security system that:
 - [ ] Calculate detection lift per pattern: `evidence.datasets[].outcome_buckets.false_negative` (xTRam1 focus)
 - [ ] Rank by `metrics.priority_score` (pre-computed formula: FN coverage high, FP risk low, rarity high)
 - [ ] Filter: `decision.recommendation=include` AND `metrics.fp_risk_score < threshold` patterns proceed to Step 3
-- [ ] Document decisions in `Phase_2_6_Pattern_Discovery_Report.md` with traceable `pattern.pattern_id` references
+- [ ] Document decisions in `Phase_4_Pattern_Discovery_Report.md` with traceable `pattern.pattern_id` references
 
 #### Step 3: Deterministic Rule Implementation
 - [ ] Create `src/Deterministic_Guardrails_Enhanced.py` (or update existing)
@@ -297,7 +297,7 @@ Build a production-grade, multi-layered prompt security system that:
 - [ ] Run attack datasets (measure TPR improvement, especially xTRam1)
 
 #### Step 5: Evaluation & Documentation
-- [ ] Create `Phase_2_6_Evaluation_Report.md`
+- [ ] Create `Phase_4_Evaluation_Report.md`
   - Before/after TPR comparison (by dataset)
   - FPR regression check (clean corpus)
   - Pattern effectiveness analysis (which patterns caught most attacks)
@@ -327,15 +327,15 @@ Build a production-grade, multi-layered prompt security system that:
 
 **Files to Create:**
 - `scripts/analysis/Pattern_Discovery_Pipeline.py` (structured pattern extraction with schema v1)
-- `docs/reports/phase2_6/pattern_candidates_v1.jsonl` (structured output, one pattern per line)
-- `docs/reports/Phase_2_6_Pattern_Discovery_Report.md` (populated from JSONL)
-- `docs/reports/Phase_2_6_Evaluation_Report.md`
+- `docs/reports/phase_4/pattern_candidates_v1.jsonl` (structured output, one pattern per line)
+- `docs/reports/Phase_4_Pattern_Discovery_Report.md` (populated from JSONL)
+- `docs/reports/Phase_4_Evaluation_Report.md`
 
 ---
 
 ### **Pattern Discovery Schema v1 (JSONL) — Hybrid Production Grade**
 
-**File:** `docs/reports/phase2_6/pattern_candidates_v1.jsonl`  
+**File:** `docs/reports/phase_4/pattern_candidates_v1.jsonl`  
 **Format:** One JSON object per line (JSONL)  
 **Sort:** Descending by `metrics.priority_score`, then descending by `evidence.datasets[].outcome_buckets.false_negative`, then ascending by `evidence.benign_regression.match_count_total`  
 **Contract:** "Each record represents one candidate pattern with dataset-backed evidence, FN/TP/FP/TN bucket counts, benign regression matches, computed priority metrics, structured implementation guidance, and an include/exclude/review recommendation—without storing raw prompt text."
@@ -395,7 +395,7 @@ Build a production-grade, multi-layered prompt security system that:
     },
     "guardrail": {
       "entrypoint": "src/OWASP_Pipeline_Guardrail.py::run_guardrail",
-      "policy_version": "phase2.6-pre"
+      "policy_version": "phase4-pre"
     }
   },
 
@@ -465,7 +465,7 @@ Build a production-grade, multi-layered prompt security system that:
 - `model.name` (string): Model used by guardrail (e.g., ProtectAI v2)
 - `model.version` (string): Pin/tag/hash if available
 - `guardrail.entrypoint` (string): Function called to evaluate prompts
-- `guardrail.policy_version` (string): e.g., "phase2.6-pre", "phase2.6-post"
+- `guardrail.policy_version` (string): e.g., "phase4-pre", "phase4-post"
 
 **metrics (object):**
 - `fn_coverage_rate` (float 0-1): `match_count_in_FN / total_FN_in_dataset` (xTRam1 lift indicator)
@@ -552,6 +552,7 @@ Category-prefixed, sequential per category:
 - **FOR explainability** (SOC analyst understanding)
 - **FOR coverage gaps** (attacks avoiding injection language)
 - **FOR multi-step narratives** (reasoning over attack chains)
+- **FOR fallback semantics** when ProtectAI is unavailable or inconclusive
 
 **New Justification Criteria:**
 After Phase 5 adversarial testing, intent layer warranted if:
@@ -563,15 +564,16 @@ After Phase 5 adversarial testing, intent layer warranted if:
 
 **Architecture (If Built):**
 ```python
-# LLM-based intent classification for ambiguous cases
-def classify_intent(prompt: str, semantic_result: dict, deterministic_result: dict, 
-                   conversation_history: list = None) -> dict:
+# LLM-based intent classification for ambiguous cases + semantic fallback
+def classify_intent(prompt: str, protectai_result: dict, deterministic_result: dict,
+                   conversation_history: list = None, protectai_available: bool = True) -> dict:
     """
     Uses GPT-4 or Claude to reason about:
     - Actual user intent (benign task vs attack attempt)
     - Multi-step attack narratives
     - Obfuscation detection
     - Explainability for SOC analysts
+    - Fallback when ProtectAI is unavailable or low-confidence
     
     **Triggering Rules (TIGHT CONTRACT - Keep Cost/Latency Bounded):**
     Only called when ONE of:
@@ -579,6 +581,7 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
     2. Layer conflict: deterministic=low_risk BUT semantic=malicious (or vice versa)
     3. Multi-turn risk score increases across conversation
     4. Coverage gap: attack style from ATTACK_TAXONOMY.md that bypasses layers 1+2
+    5. ProtectAI not available (local model failure) or returns unusable output
     
     **NOT a primary detector** - surgical use only for:
     - Explainability (SOC analyst summaries)
@@ -592,6 +595,8 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
     #   "explanation": str,  # Natural language rationale for SOC
     #   "evidence": [...]    # Which signals triggered this conclusion
     # }
+    # Root intent summary can be fed into the policy combiner as a tie-breaker
+    # (ProtectAI stays primary, intent layer is a fallback/augmentor).
 ```
 
 **Phase 6 Checklist (If Pursued):**
@@ -610,12 +615,14 @@ def classify_intent(prompt: str, semantic_result: dict, deterministic_result: di
 - [ ] Design LLM prompt for intent classification (few-shot examples, reasoning chain)
 - [ ] Choose LLM (GPT-4, Claude 3.5 Sonnet, or similar reasoning model)
 - [ ] Define output schema (intent label + explanation + confidence)
+- [ ] Define ProtectAI fallback triggers and handoff contract (root intent -> policy)
 
 #### Step 2: Implementation
 - [ ] Create `src/Intent_Classifier.py`
 - [ ] Integrate with `OWASP_Pipeline_Guardrail.py` (after semantic layer)
 - [ ] Add explainability logging (natural language rationale)
 - [ ] Implement caching (avoid redundant LLM calls for similar prompts)
+- [ ] Add fallback path when ProtectAI is unavailable or ambiguous
 
 #### Step 3: Evaluation
 - [ ] Test on Phase 5 coverage gaps (attacks that bypassed deterministic + semantic)
@@ -787,7 +794,7 @@ For each discovered attack type that bypasses guardrails:
 
 ---
 
-### ⏸️ Phase 6: Intent/Reasoning Layer (Deferred Until After Phase 5)
+### ⏸️ Phase 6: Intent/Reasoning + Semantic Fallback Layer (Deferred Until After Phase 5)
 
 **Original Purpose (initial plan):** LLM-based ambiguous case resolution for FPR reduction
 
@@ -1209,7 +1216,7 @@ Apply architecture to new guardrail systems (PII leakage, tool-use, data exfiltr
    - Test obfuscation, multi-turn, encoding attacks
    - Document coverage matrix (what's caught, what's not)
 
-3. **Phase 6 Decision: Intent/Reasoning Layer**
+3. **Phase 6 Decision: Intent/Reasoning + Semantic Fallback Layer**
    - Review Phase 5 coverage gaps and ATTACK_TAXONOMY.md
    - Decide if intent layer warranted (explainability/coverage vs. complexity/cost)
    - Check triggering contract: ambiguity, conflicts, multi-turn, coverage gaps
@@ -1273,8 +1280,8 @@ Apply architecture to new guardrail systems (PII leakage, tool-use, data exfiltr
 | **WORK_LOG_Phase2_Semantic_Model_Selection.md** | Phase 2 detailed history | `docs/reports/` |
 | **Clean_Benign_Corpus_Evaluation_Report.md** | 1.0% FPR validation report | `docs/reports/` |
 | **STRATEGIC_ANALYSIS_FPR_And_Next_Steps.md** | FPR crisis analysis | `docs/reports/` |
-| **ACTION_PLAN_Phase_2_5_Next_Steps.md** | Phase 3 code improvements | `docs/reports/` |
-| **Phase_2_5_1_Sanitization_Enrichment_FULL (2).md** | Phase 4 specification (fka 2.51) | `docs/planning/` |
+| **Phase 3 action plan** (legacy filename: `ACTION_PLAN_Phase_2_5_Next_Steps.md`) | Phase 3 code improvements | `docs/reports/` |
+| **Phase_4_Sanitization_Enrichment_FULL.md** | Phase 4 specification (current) | `docs/planning/` |
 
 ---
 
@@ -1288,7 +1295,7 @@ Apply architecture to new guardrail systems (PII leakage, tool-use, data exfiltr
 ## 🔧 Professional Fixes Applied
 
 **Sanity Checks Completed:**
-- ✅ Phase numbering (linear): 2.5→3, 2.6→4, 3→5, 3.5→6, 4→7, 5→8, 5.5→9, 6→10
+- ✅ Phase numbering is linear and forward-only
 - ✅ Measurement provenance: Standardized dataset names (TrustAIRLab_xTRam1, Clean_Benign_Corpus_v1)
 - ✅ FPR regression prevention: Weak signals (boundary testing) only escalate when combined
 - ✅ CI Gates: Gate A (FPR≤2%), Gate B (coverage lift +15pp xTRam1, +5pp mean)

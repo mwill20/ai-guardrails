@@ -1,8 +1,8 @@
 """
-OWASP_Pipeline_Guardrail.py - Phase 2.5 Semantic Layer + Phase 2.6 Deterministic Enrichment
+OWASP_Pipeline_Guardrail.py - Phase 2 Semantic Layer + Phase 4 Deterministic Enrichment
 
-Purpose: Full guardrail pipeline integrating deterministic patterns (Phase 2.6) 
-with semantic ML classification (Phase 2.5) and OWASP-aware risk escalation.
+Purpose: Full guardrail pipeline integrating deterministic patterns (Phase 4) 
+with semantic ML classification (Phase 2) and OWASP-aware risk escalation.
 
 Model:
     - ProtectAI deberta-v3-base-prompt-injection-v2 (~134M parameters)
@@ -10,9 +10,9 @@ Model:
     - Complements deterministic OWASP patterns (explicit attacks)
 
 Architecture:
-    - Depends on Deterministic_Guardrails Phase 2.6 enhancements (OWASP patterns + version constant)
+    - Depends on Deterministic_Guardrails Phase 4 enhancements (OWASP patterns + version constant)
     - Consumes deterministic layer via imports (classify_input_with_details)
-    - Deterministic layer may evolve independently (Phase 2.6+)
+    - Deterministic layer may evolve independently (Phase 4+)
     - Does not change semantic label contract from Phase 2 skeleton
     - Single source of truth for OWASP patterns (imported from Deterministic_Guardrails)
     - OWASP version tracking for audit trail (logged in every entry)
@@ -107,7 +107,7 @@ def find_sensitive_patterns(text: str) -> List[OwaspHit]:
     
     DATA SHAPE: Supports OWASP_PATTERNS as either:
       - 3-tuples: (pattern, code, category) [Phase 2 skeleton]
-      - 4-tuples: (pattern, code, category, weight) [Phase 2.6+]
+      - 4-tuples: (pattern, code, category, weight) [Phase 4+]
     Backwards-compatible tuple unpacking prevents crashes across phases.
     """
     text_lower = text.lower()
@@ -140,8 +140,27 @@ def find_sensitive_patterns(text: str) -> List[OwaspHit]:
     return hits
 
 
+def _is_educational_security_prompt(text: str) -> bool:
+    """
+    Narrow allowlist: clearly educational/security-research intent to reduce FPs.
+    Applies only when no strong deterministic/OWASP evidence exists.
+    """
+    lowered = text.lower()
+    markers = [
+        "explain prompt injection",
+        "what is prompt injection",
+        "how prompt injection works",
+        "security research",
+        "why prompt injection is dangerous",
+        "describe prompt injection",
+        "explain jailbreak attacks",
+        "how to defend against prompt injection",
+    ]
+    return any(m in lowered for m in markers)
+
+
 # ---------------------------------------------------------------------------
-# Phase 2.5: REAL semantic model integration
+# Phase 2: REAL semantic model integration
 # Using protectai/deberta-v3-base-prompt-injection-v2
 # 
 # CHANGED: Swapped from madhurjindal/Jailbreak-Detector-Large to ProtectAI v2
@@ -281,7 +300,7 @@ def _map_jailbreak_to_semantic(
 
 def semantic_classify_input(text: str) -> Tuple[SemanticRiskResult, List[OwaspHit]]:
     """
-    Phase 2.5 semantic classifier using ProtectAI DeBERTa-v3
+    Phase 2 semantic classifier using ProtectAI DeBERTa-v3
     plus OWASP-aware pattern escalation.
 
     Returns:
@@ -322,7 +341,7 @@ def combine_risks(deterministic_risk: str, semantic_label: SemanticRisk) -> str:
       - Phase 1 had `else: return "low_risk"` which can treat unknown patterns
         as safe.
       - Semantic layer MUST override deterministic false negatives.
-      - This explicit check prevents subtle bugs during Phase 2.6+ tuning.
+      - This explicit check prevents subtle bugs during Phase 4+ tuning.
     """
 
     # COMPENSATING CONTROL: Semantic malicious/critical overrides deterministic low_risk
@@ -366,7 +385,7 @@ def build_log_entry(
     Logs ONLY metadata (no full raw prompt content; only a short sanitized preview):
 
         - deterministic_risk
-        - deterministic_pattern_hits: patterns detected by deterministic layer (NEW in Phase 2.6)
+        - deterministic_pattern_hits: patterns detected by deterministic layer (NEW in Phase 4)
         - semantic_label
         - semantic_score
         - semantic_model: model name for traceability
@@ -435,15 +454,15 @@ def final_agent_input(
 
 
 # ---------------------------------------------------------------------------
-# Full Phase 2.5 pipeline function
+# Full Phase 2 pipeline function
 # ---------------------------------------------------------------------------
 
 def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[str, Any]:
     """
-    End-to-end demo pipeline for Phase 2.5:
+    End-to-end demo pipeline for Phase 2:
 
         raw
-          → deterministic_risk (with detailed pattern hits - Phase 2.6 enhancement)
+          → deterministic_risk (with detailed pattern hits - Phase 4 enhancement)
           → semantic_result (REAL model + OWASP hits)
           → combined_risk
           → sanitized
@@ -466,7 +485,7 @@ def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[st
         # Use this in tests, notebooks, or internal consoles with proper access control.
     """
 
-    # Phase 1 deterministic path (enhanced in Phase 2.6)
+    # Phase 1 deterministic path (enhanced in Phase 4)
     raw = get_raw_input(user_text)
     deterministic_risk, deterministic_pattern_hits = classify_input_with_details(raw)
     
@@ -478,9 +497,18 @@ def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[st
     #    - ASI codes only (legacy filtered out)
     #    - Used for semantic escalation + compliance logging
 
-    # Phase 2.5 semantic classifier (REAL model + OWASP patterns)
+    # Phase 2 semantic classifier (REAL model + OWASP patterns)
     # Returns both semantic_result AND owasp_hits (computed once)
     semantic_result, owasp_hits = semantic_classify_input(raw)
+
+    # Educational allowlist (narrow, no strong evidence present)
+    if _is_educational_security_prompt(raw):
+        if deterministic_risk != "high_risk" and not owasp_hits:
+            if semantic_result["label"] in ("malicious", "suspicious"):
+                semantic_result = {
+                    "label": "suspicious",
+                    "score": semantic_result["score"],
+                }
 
     # Combine risks (Phase 2 logic + Phase 1 compensating control)
     combined_risk = combine_risks(deterministic_risk, semantic_result["label"])
@@ -498,7 +526,7 @@ def run_guardrail_pipeline(user_text: str, include_raw: bool = False) -> Dict[st
         combined_risk=combined_risk,
         sanitized_text=sanitized,
         owasp_hits=owasp_hits,
-        deterministic_pattern_hits=deterministic_pattern_hits,  # NEW in Phase 2.6
+        deterministic_pattern_hits=deterministic_pattern_hits,  # NEW in Phase 4
         include_patterns=True,  # Production default: log patterns (acceptable risk)
     )
 

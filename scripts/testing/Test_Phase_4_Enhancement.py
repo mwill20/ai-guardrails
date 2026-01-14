@@ -13,7 +13,7 @@ sys.path.insert(0, str(project_root / "src"))
 from OWASP_Pipeline_Guardrail import run_guardrail_pipeline
 
 print("=" * 80)
-print("PHASE 2.6 ENHANCEMENT TEST - OWASP Pattern Integration")
+print("PHASE 4 ENHANCEMENT TEST - OWASP Pattern Integration")
 print("=" * 80)
 print()
 

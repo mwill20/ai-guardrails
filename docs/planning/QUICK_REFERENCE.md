@@ -91,7 +91,7 @@ output_path = project_root / "reports" / "your_output.json"
 
 | Metric | Value |
 |--------|-------|
-| **Phase** | 2.5 Complete ✅ |
+| **Phase** | 4 Active ✅ |
 | **Current Model** | ProtectAI deberta-v3-base-prompt-injection-v2 |
 | **True FPR** | 1.0% (2/200 clean prompts) |
 | **Core Use Cases FPR** | 0% |
@@ -103,8 +103,8 @@ output_path = project_root / "reports" / "your_output.json"
 
 ## 🎯 Decision Quick Reference
 
-**Semantic Intent Layer:** ❌ SKIP  
-- **Why:** 1.0% FPR acceptable, cost/benefit unfavorable for 1% → 0%
+**Semantic Intent Layer (Phase 6):** DEFER
+- **Why:** 1.0% FPR acceptable; revisit after Phase 5 coverage gaps
 
 **Model Swap:** ✅ COMPLETE  
 - **From:** madhurjindal (93.6% FPR)

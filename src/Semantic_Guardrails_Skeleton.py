@@ -27,7 +27,7 @@ WHY WE DID NOT (YET) ADD A SEMANTIC LLM TO THIS PROJECT:
 
     3. CURRENT COVERAGE ASSESSMENT
        - Phase 2 semantic classifier (ProtectAI v2) catches 66.6% mean TPR on attack datasets
-       - Phase 2.6 deterministic enrichment targeting +15pp lift on novel attacks (xTRam1)
+       - Phase 4 deterministic enrichment targeting +15pp lift on novel attacks (xTRam1)
        - Unknown if LLM reasoning layer needed until Phase 3 coverage matrix complete
 
 DECISION CRITERIA (Post-Phase 3):

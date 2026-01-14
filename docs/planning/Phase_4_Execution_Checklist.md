@@ -21,12 +21,12 @@
 ## 0️⃣ Pre-Flight Checklist
 
 ### Git Workflow
-- [ ] Create branch: `git checkout -b phase-2.6-deterministic-enrichment`
+- [ ] Create branch: `git checkout -b phase-4-deterministic-enrichment`
 - [ ] Verify clean working directory: `git status`
 - [ ] Record current commit SHA for traceability
 
 ### Baseline Metrics Snapshot (Before)
-- [ ] Record baseline metrics in `docs/reports/phase2_6/baseline_metrics.json`:
+- [ ] Record baseline metrics in `docs/reports/phase_4/baseline_metrics.json`:
   - [ ] Clean_Benign_Corpus_v1 FPR = **1.0%** (2/200 blocked)
   - [ ] TrustAIRLab_xTRam1 TPR = **25.4%**
   - [ ] TrustAIRLab_jailbreak TPR = **100%**
@@ -39,12 +39,12 @@
 - [ ] Verify dependencies installed: `pip list | grep -E "transformers|torch"`
 - [ ] Create output directories:
   ```powershell
-  mkdir reports/phase2_6 -Force
+  mkdir reports/phase_4 -Force
   mkdir reports/evals -Force
-  mkdir docs/reports/phase2_6 -Force
+  mkdir docs/reports/phase_4 -Force
   ```
-  - [ ] `reports/phase2_6/` = generated artifacts (JSONL, JSON)
-  - [ ] `docs/reports/phase2_6/` = authored narrative (review, evaluation report)
+  - [ ] `reports/phase_4/` = generated artifacts (JSONL, JSON)
+  - [ ] `docs/reports/phase_4/` = authored narrative (review, evaluation report)
 
 ### Dataset & Eval Log Verification
 - [ ] Confirm datasets exist on disk:
@@ -187,7 +187,7 @@
   - [ ] `git_commit` (current SHA)
   - [ ] `model.name`, `model.version`
   - [ ] `guardrail.entrypoint`, `guardrail.policy_version`
-- [ ] Write to: `reports/phase2_6/pattern_candidates_v1.jsonl` (artifact, not narrative)
+- [ ] Write to: `reports/phase_4/pattern_candidates_v1.jsonl` (artifact, not narrative)
 - [ ] **Sort by:** `priority_score` (desc) → `fn_prompt_hits` (desc) → `fp_prompt_hits_clean` (asc)
 
 ### Validation
@@ -204,7 +204,7 @@
 **Deliverable:** `pattern_review_v1.md` with approved patterns
 
 ### JSONL Loading & Validation
-- [ ] Load `reports/phase2_6/pattern_candidates_v1.jsonl` (artifact output from Step 1)
+- [ ] Load `reports/phase_4/pattern_candidates_v1.jsonl` (artifact output from Step 1)
 - [ ] Parse and validate each record:
   - [ ] Assert `schema_version = "pattern_candidates.v1"`
   - [ ] Verify all required fields present
@@ -231,7 +231,7 @@
   - [ ] Only contribute to risk when combined with strong signals
 
 ### Report Creation
-- [ ] Create `docs/reports/phase2_6/pattern_review_v1.md` (narrative document)
+- [ ] Create `docs/reports/phase_4/pattern_review_v1.md` (narrative document)
 - [ ] Section 1: Summary
   - [ ] Total patterns discovered: ___
   - [ ] Auto-approved (include): ___
@@ -250,7 +250,7 @@
 - [ ] Section 4: Next Steps → Step 3 implementation
 
 ### Final Approved List
-- [ ] Export to `reports/phase2_6/approved_patterns.json`:
+- [ ] Export to `reports/phase_4/approved_patterns.json`:
   ```json
   [
     {
@@ -273,7 +273,7 @@
 
 ### Code Setup
 - [ ] Create `src/Deterministic_Guardrails_Enhanced.py` (or update existing)
-- [ ] Load `reports/phase2_6/approved_patterns.json`
+- [ ] Load `reports/phase_4/approved_patterns.json`
 - [ ] Define pattern lists by category as module constants
 
 ### Detection Functions (Signal Strength: 0-3)
@@ -440,10 +440,10 @@
 
 ## 7️⃣ Reporting & Closeout
 
-**Deliverable:** `Phase_2_6_Evaluation_Report.md` + updated project docs
+**Deliverable:** `Phase_4_Evaluation_Report.md` + updated project docs
 
 ### Evaluation Report
-- [ ] Create `docs/reports/Phase_2_6_Evaluation_Report.md`
+- [ ] Create `docs/reports/Phase_4_Evaluation_Report.md`
 - [ ] **Section 1: Executive Summary**
   - [ ] Phase 4 goal (deterministic enrichment for xTRam1 coverage)
   - [ ] Gate A result: FPR ___ % (≤2.0% required) — ⬜ PASS | ⬜ FAIL
@@ -506,10 +506,10 @@
 
 ### Version Control
 - [ ] Bump `guardrail.policy_version` in code:
-  - [ ] `"phase2.6-pre"` → `"phase2.6-post"` or `"2.1"`
+  - [ ] `"phase4-pre"` → `"phase4-post"` or `"4.1"`
 - [ ] Commit all changes: `git add -A; git commit -m "Phase 4: Deterministic enrichment complete"`
-- [ ] Merge branch: `git checkout main; git merge phase-2.6-deterministic-enrichment`
-- [ ] Tag release: `git tag phase-2.6-complete`
+- [ ] Merge branch: `git checkout main; git merge phase-4-deterministic-enrichment`
+- [ ] Tag release: `git tag phase-4-complete`
 
 ---
 
@@ -528,10 +528,10 @@
 
 ### Final Deliverables Checklist
 - [ ] `scripts/analysis/Pattern_Discovery_Pipeline.py` (executable, schema-compliant output)
-- [ ] `reports/phase2_6/pattern_candidates_v1.jsonl` (artifact: sorted by priority_score)
-- [ ] `reports/phase2_6/approved_patterns.json` (artifact: input for code generation)
-- [ ] `docs/reports/phase2_6/pattern_review_v1.md` (narrative: approved patterns documented)
-- [ ] `docs/reports/Phase_2_6_Evaluation_Report.md` (narrative: before/after metrics, gate results)
+- [ ] `reports/phase_4/pattern_candidates_v1.jsonl` (artifact: sorted by priority_score)
+- [ ] `reports/phase_4/approved_patterns.json` (artifact: input for code generation)
+- [ ] `docs/reports/phase_4/pattern_review_v1.md` (narrative: approved patterns documented)
+- [ ] `docs/reports/Phase_4_Evaluation_Report.md` (narrative: before/after metrics, gate results)
 - [ ] `src/Deterministic_Guardrails_Enhanced.py` (implemented, unit tested)
 - [ ] `src/OWASP_Pipeline_Guardrail.py` (integrated, execution order verified)
 - [ ] `WORK_LOG.md` updated (Phase 4 summary, key decisions, challenges)
@@ -563,7 +563,7 @@
 4. ✅ All changes are documented, reproducible, and auditable
 5. ✅ Pattern discovery process traceable via schema v1 JSONL
 6. ✅ Production invariants enforced (layer precedence, no silent allow, signal scoring)
-7. ✅ Branch merged to main, tagged `phase-2.6-complete`
+7. ✅ Branch merged to main, tagged `phase-4-complete`
 
 ---
 

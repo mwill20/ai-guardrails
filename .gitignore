@@ -48,11 +48,14 @@ models/
 # Generated reports and eval logs (reproducible artifacts)
 reports/evals/
 reports/phase2_6/
+reports/phase_4/
 
 # Study/local notes (not tracked)
 _study/
 reports/*.json
 reports/*.jsonl
+Lessons/
+docs/legacy/
 
 # Archive/old materials (not for public view)
 archive/

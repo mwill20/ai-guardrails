@@ -1,4 +1,4 @@
-# Phase 3 Action Plan — Next Steps
+# Phase 2-3 Action Plan - Next Steps (legacy filename)
 
 ## Overview
 
@@ -11,7 +11,7 @@
 
 ## Three-Phase Execution Plan
 
-### Phase 4 — Code Hardening (This Week)
+### Phase 2 - Semantic Guardrails Hardening (This Week)
 
 **Duration:** 2-3 hours  
 **Goal:** Make current implementation production-safe and maintainable  
@@ -275,7 +275,7 @@ For each blocked prompt in `reports/Blocked_Benign_For_Review.jsonl`, classify:
 
 ---
 
-**Task 2.5: Calculate True FPR**
+**Task 3.5: Calculate True FPR**
 
 Create `scripts/Calculate_True_FPR.py`:
 
@@ -314,7 +314,7 @@ print(f"Conservative FPR (counting ambiguous): {conservative_fpr:.1f}%")
 
 ---
 
-**Task 2.6: Write FPR Measurement Report**
+**Task 3.6: Write FPR Measurement Report**
 
 Create `reports/FPR_Measurement_Clean_Corpus.md`:
 
@@ -363,7 +363,7 @@ Create `reports/FPR_Measurement_Clean_Corpus.md`:
 
 ---
 
-### Phase 6 — Intent Layer Decision (Week 3)
+### Phase 6 - Intent/Reasoning + Semantic Fallback Decision (Week 3)
 
 **Duration:** 1 week (if implemented)  
 **Goal:** Decide if semantic intent layer is justified, implement if so  
@@ -392,7 +392,7 @@ Create `reports/FPR_Measurement_Clean_Corpus.md`:
 
 **Task 3.1: Design Intent Layer Architecture**
 
-Create `docs/Phase_2_6_Intent_Layer_Design.md`:
+Create `docs/Phase_6_Intent_Layer_Design.md`:
 
 ```markdown
 # Semantic Intent Layer Design
@@ -421,7 +421,7 @@ deterministic → semantic → **intent layer** → policy
 - Total: ~$0.12-0.16 per 200-prompt eval
 ```
 
-**Deliverable:** `docs/Phase_2_6_Intent_Layer_Design.md` (full spec)
+**Deliverable:** `docs/Phase_6_Intent_Layer_Design.md` (full spec)
 
 ---
 
@@ -570,7 +570,7 @@ Collect 10-15 examples of intent layer decisions:
 
 #### Deliverables (If Implemented)
 
-1. `docs/Phase_2_6_Intent_Layer_Design.md` (design spec)
+1. `docs/Phase_6_Intent_Layer_Design.md` (design spec)
 2. `Intent_Layer.py` (implementation)
 3. `reports/Intent_Layer_Impact_Analysis.md` (evaluation results)
 4. `reports/Intent_Layer_Explainability_Examples.md` (examples)
@@ -582,9 +582,9 @@ Collect 10-15 examples of intent layer decisions:
 
 | Phase | Duration | Start | End | Deliverables |
 |-------|----------|-------|-----|--------------|
-| 2.5.1 Code Hardening | 2-3 hours | Week 1 Day 1 | Week 1 Day 1 | Updated code, test run, review |
-| 2.5.2 Clean Corpus | 2-3 days | Week 2 Day 1 | Week 2 Day 3 | Corpus, eval, FPR report |
-| 2.5.3/2.6 Intent Layer | 1 week (if justified) | Week 3 Day 1 | Week 3 Day 5 | Design, impl, eval, examples |
+| Phase 2 Code Hardening | 2-3 hours | Week 1 Day 1 | Week 1 Day 1 | Updated code, test run, review |
+| Phase 3 Clean Corpus | 2-3 days | Week 2 Day 1 | Week 2 Day 3 | Corpus, eval, FPR report |
+| Phase 6 Intent/Fallback Layer | 1 week (if justified) | Week 3 Day 1 | Week 3 Day 5 | Design, impl, eval, examples |
 
 **Total Duration:** 2 weeks (if skip intent layer) to 3 weeks (if implement intent layer)
 
@@ -592,7 +592,7 @@ Collect 10-15 examples of intent layer decisions:
 
 ## Success Metrics
 
-### Phase 4 (Code Hardening)
+### Phase 2 (Code Hardening)
 - ✅ No regressions in evaluation metrics
 - ✅ Robust label handling prevents silent failures
 - ✅ Logging enables debugging
@@ -602,7 +602,7 @@ Collect 10-15 examples of intent layer decisions:
 - ✅ Blocked prompts categorized (TP/FP/AMB)
 - ✅ Clear recommendation on intent layer
 
-### Phase 6 (Intent Layer, if implemented)
+### Phase 6 (Intent/Fallback Layer, if implemented)
 - ✅ FPR reduced by 2-4 percentage points
 - ✅ Cost < $0.02 per 200 prompts
 - ✅ Explainability logs exist for audit
@@ -611,7 +611,7 @@ Collect 10-15 examples of intent layer decisions:
 
 ## Risk Mitigation
 
-### Phase 4 Risks
+### Phase 2 Risks
 **Risk:** Code changes break existing functionality  
 **Mitigation:** Run full `Eval.py` after each change, verify metrics unchanged
 
@@ -633,7 +633,7 @@ Collect 10-15 examples of intent layer decisions:
 
 ## Decision Points
 
-### Decision Point 1: After Phase 4
+### Decision Point 1: After Phase 2
 
 **Question:** Are code improvements working correctly?
 
@@ -658,12 +658,12 @@ Collect 10-15 examples of intent layer decisions:
 
 **Outcomes:**
 - ✅ **FPR < 3%:** Skip intent layer, proceed to Phase 5 (adversarial testing)
-- ✅ **FPR 3-8%:** Implement intent layer (Phase 4)
+- ✅ **FPR 3-8%:** Implement intent layer (Phase 6)
 - ⚠️ **FPR > 8%:** Re-evaluate model or preprocessing before adding intent layer
 
 ---
 
-### Decision Point 3: After Phase 4 (if implemented)
+### Phase 6 - Intent/Reasoning + Semantic Fallback Decision (Week 3)
 
 **Question:** Did intent layer improve FPR meaningfully?
 
@@ -696,7 +696,7 @@ c:\Projects\Guardrails\
 │   ├── Benign_Corpus_Categories.md
 │   └── Clean_Benign_Corpus_v1.jsonl
 ├── docs\
-│   └── Phase_2_6_Intent_Layer_Design.md
+│   └── Phase_6_Intent_Layer_Design.md
 ├── reports\
 │   ├── Clean_Benign_Corpus_Evaluation.json
 │   ├── Blocked_Benign_Manual_Review.jsonl
@@ -714,7 +714,7 @@ c:\Projects\Guardrails\
 
 ## Appendix: Quick Reference Commands
 
-### Phase 4 Commands
+### Phase 2 Commands
 ```powershell
 # Test after code changes
 python Eval.py
@@ -732,7 +732,7 @@ python scripts/Eval_Clean_Benign_Corpus.py
 python scripts/Calculate_True_FPR.py
 ```
 
-### Phase 4 Commands (if applicable)
+### Phase 6 Commands (if applicable)
 ```powershell
 # Run evaluation with intent layer
 python scripts/Eval_Clean_Benign_Corpus.py
@@ -745,7 +745,7 @@ python scripts/Calculate_True_FPR.py
 
 ## Notes
 
-- All phases are **sequential** (don't start Phase 3 until 2.5.1 is complete)
+- All phases are **sequential** (don't start Phase 3 until Phase 2 hardening is complete)
 - Decision points are **data-driven** (base decisions on measured metrics, not intuition)
 - Documentation is **continuous** (document as you go, not after the fact)
 - This is a **learning project** (take time to understand why things work, not just make them work)
@@ -754,5 +754,5 @@ python scripts/Calculate_True_FPR.py
 
 **Document Version:** 1.0  
 **Status:** Ready for execution  
-**Next Action:** Begin Phase 4 Task 1.1 (implement robust label normalization)  
+**Next Action:** Begin Phase 2 Task 1.1 (implement robust label normalization)  
 **Last Updated:** December 13, 2025

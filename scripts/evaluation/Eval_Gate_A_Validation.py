@@ -17,7 +17,7 @@ sys.path.insert(0, str(project_root / "src"))
 from OWASP_Pipeline_Guardrail import run_guardrail_pipeline
 
 print("=" * 80)
-print("PHASE 2.6 GATE A VALIDATION")
+print("PHASE 4 GATE A VALIDATION")
 print("=" * 80)
 print("Gate A: FPR <= 2.0% on Clean_Benign_Corpus_v1")
 print("Baseline: 1.0% FPR (2/200 prompts)")

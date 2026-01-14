@@ -44,17 +44,18 @@ Guardrails/
 │   ├── planning/                     # Strategic planning documents
 │   │   ├── AI_Guardrail_NorthStar (1).md
 │   │   ├── Guardrail_Mastery_Ladder (1).md
-│   │   ├── Phase_2_5_Evaluation_Plan.md
-│   │   ├── Phase_2_5_LLM_Enhanced_FULL (2).md
-│   │   ├── Phase_2_5_1_Sanitization_Enrichment_FULL (2).md
-│   │   ├── phase2_semantic_guardrails (1) (1).md
 │   │   ├── Model_Size_and_FineTuning_Requirements.md
 │   │   ├── PROMPT_Build_Benign_Corpus.md
-│   │   └── Semantic_Guardrail_Skeleton
+│   │   ├── Phase_2_LLM_Enhanced_FULL.md
+│   │   ├── Phase_4_Sanitization_Enrichment_FULL.md
+│   │   ├── Phase_4_Execution_Checklist.md
+│   │   ├── PROJECT_ROADMAP.md
+│   │   ├── PROJECT_ORGANIZATION.md
+│   │   └── QUICK_REFERENCE.md
 │   └── reports/                      # Work logs and analysis reports
 │       ├── WORK_LOG_Phase2_Semantic_Model_Selection.md
 │       ├── STRATEGIC_ANALYSIS_FPR_And_Next_Steps.md
-│       ├── ACTION_PLAN_Phase_2_5_Next_Steps.md
+│       ├── ACTION_PLAN_Phase_2_5_Next_Steps.md  # legacy filename for Phase 3 action plan
 │       ├── AI_Report_Semantic_Intent_Layer.md
 │       └── Clean_Benign_Corpus_Evaluation_Report.md
 │
@@ -205,13 +206,14 @@ python scripts/testing/Test_Benign_Blocking.py
 ### Planning Documents
 - **AI_Guardrail_NorthStar:** Overall system vision and goals
 - **Guardrail_Mastery_Ladder:** Progressive improvement roadmap
-- **Phase_2_5_Evaluation_Plan:** Evaluation methodology
+- **Phase_4_Execution_Checklist:** Deterministic enrichment execution checklist
+- **Phase_4_Sanitization_Enrichment_FULL:** Phase 4 specification
 
 ### Reports
 - **WORK_LOG_Phase2_Semantic_Model_Selection:** Complete history of model selection work
 - **Clean_Benign_Corpus_Evaluation_Report:** Final evaluation results with 1.0% FPR
 - **STRATEGIC_ANALYSIS_FPR_And_Next_Steps:** FPR analysis and recommendations
-- **ACTION_PLAN_Phase_2_5_Next_Steps:** Detailed next steps for code improvements
+- **Phase 3 action plan** (legacy filename: `ACTION_PLAN_Phase_2_5_Next_Steps.md`): Semantic hardening and clean corpus tasks
 
 ## 🎯 Planned Enhancements
 

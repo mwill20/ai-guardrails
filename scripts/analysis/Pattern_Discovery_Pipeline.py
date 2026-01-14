@@ -299,7 +299,7 @@ def main():
     # Setup paths
     project_root = Path(__file__).parent.parent.parent
     eval_dir = project_root / "reports" / "evals"
-    output_dir = project_root / "reports" / "phase2_6"
+    output_dir = project_root / "reports" / "phase_4"
     output_file = output_dir / "pattern_candidates_v1.jsonl"
     
     output_dir.mkdir(parents=True, exist_ok=True)

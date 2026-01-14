@@ -46,21 +46,22 @@ Guardrails/
 - ✅ Test_Alternative_Models.py
 - ✅ Test_Benign_Blocking.py
 
-**Planning Docs → `docs/planning/`**
-- ✅ AI_Guardrail_NorthStar (1).md
-- ✅ Guardrail_Mastery_Ladder (1).md
-- ✅ phase2_semantic_guardrails (1) (1).md
-- ✅ Phase_2_5_Evaluation_Plan.md
-- ✅ Phase_2_5_LLM_Enhanced_FULL (2).md
-- ✅ Phase_2_5_1_Sanitization_Enrichment_FULL (2).md
-- ✅ Model_Size_and_FineTuning_Requirements.md
-- ✅ PROMPT_Build_Benign_Corpus.md
-- ✅ Semantic_Guardrail_Skeleton
+**Planning Docs ?+' `docs/planning/`**
+- ?o. AI_Guardrail_NorthStar (1).md
+- ?o. Guardrail_Mastery_Ladder (1).md
+- ?o. Model_Size_and_FineTuning_Requirements.md
+- ?o. PROMPT_Build_Benign_Corpus.md
+- ?o. Phase_2_LLM_Enhanced_FULL.md
+- ?o. Phase_4_Sanitization_Enrichment_FULL.md
+- ?o. Phase_4_Execution_Checklist.md
+- ?o. PROJECT_ROADMAP.md
+- ?o. PROJECT_ORGANIZATION.md
+- ?o. QUICK_REFERENCE.md
 
 **Reports → `docs/reports/`**
 - ✅ WORK_LOG_Phase2_Semantic_Model_Selection.md
 - ✅ STRATEGIC_ANALYSIS_FPR_And_Next_Steps.md
-- ✅ ACTION_PLAN_Phase_2_5_Next_Steps.md
+- ✅ ACTION_PLAN_Phase_2_5_Next_Steps.md (legacy filename for Phase 3 action plan)
 - ✅ AI_Report_Semantic_Intent_Layer.md
 - ✅ Clean_Benign_Corpus_Evaluation_Report.md
 
@@ -168,8 +169,8 @@ result = run_guardrail_pipeline("Your prompt here")
 ## Next Steps
 
 1. **Optional Renames:** Consider renaming files with spaces/parentheses to clean names:
-   - `AI_Guardrail_NorthStar (1).md` → `AI_Guardrail_NorthStar.md`
-   - `phase2_semantic_guardrails (1) (1).md` → `phase2_semantic_guardrails.md`
+   - `AI_Guardrail_NorthStar (1).md` -> `AI_Guardrail_NorthStar.md`
+   - `Guardrail_Mastery_Ladder (1).md` -> `Guardrail_Mastery_Ladder.md`
    - etc.
 
 2. **Version Control:** Initialize git repository if not already done:
